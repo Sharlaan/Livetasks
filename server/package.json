@@ -1,0 +1,120 @@
+{
+  "name": "livetask-raphael-morineau",
+  "version": "0.1.0",
+  "description": "Realtime TODO list",
+  "keywords": [
+    "TODO",
+    "tchat",
+    "websocket",
+    "nodejs"
+  ],
+  "author": "Sharlaan <raphael.morineau@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://rmorineau@git.ideolys.com/ideolys/livetask-raphael-morineau.git"
+  },
+  "main": "server.js",
+  "engines": {
+    "node": "7.x"
+  },
+  "scripts": {
+    "migrate": "babel-node -- src/config/database/migrate.js",
+    "start": "cross-env NODE_ENV=development nodemon --delay 2 --exec babel-node -- src/server.js",
+    "start:prod": "cross-env NODE_ENV=production run-s clean build runprod",
+    "runprod": "pm2 start dist/server.js --name \"livetasks\"",
+    "clean": "del-cli dist/*",
+    "build": "babel src/ -d dist -s --copy-files",
+    "format": "prettier --single-quote true --no-semi --write 'src/**/*.js'",
+    "lint": "eslint src",
+    "test": "nyc ava",
+    "buildReport": "nyc report --reporter=html",
+    "openReport": "opn coverage/index.html",
+    "coverage": "run-s buildReport openReport"
+  },
+  "devDependencies": {
+    "ava": "^0.19.1",
+    "babel-cli": "^6.24.1",
+    "babel-eslint": "^7.2.3",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
+    "babel-polyfill": "^6.23.0",
+    "babel-preset-env": "^1.4.0",
+    "babel-register": "^6.24.1",
+    "cross-env": "^4.0.0",
+    "del-cli": "^0.2.1",
+    "eslint": "^3.19.0",
+    "nodemon": "^1.11.0",
+    "npm-run-all": "^4.0.2",
+    "nyc": "^10.3.0",
+    "opn-cli": "^3.1.0",
+    "prettier": "^1.3.0",
+    "prompt": "^1.0.0",
+    "standard": "^10.0.2"
+  },
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "body-parser": "^1.17.1",
+    "compression": "^1.6.2",
+    "cors": "^2.8.3",
+    "express": "^4.15.2",
+    "helmet": "^3.5.0",
+    "hpp": "^0.2.2",
+    "morgan": "^1.8.1",
+    "pg-promise": "^5.6.7",
+    "pgtools": "^0.2.3",
+    "socket.io": "^1.7.3"
+  },
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "targets": {
+            "node": 7
+          },
+          "modules": "commonjs",
+          "debug": false
+        }
+      ]
+    ],
+    "plugins": [
+      [
+        "transform-object-rest-spread",
+        {
+          "useBuiltIns": true
+        }
+      ]
+    ],
+    "ignore": "tests/**/*.spec.js",
+    "env": {
+      "development": {
+        "sourceMaps": "inline"
+      }
+    }
+  },
+  "standard": {
+    "parser": "babel-eslint"
+  },
+  "eslintConfig": {
+    "extends": "standard",
+    "parser": "babel-eslint"
+  },
+  "ava": {
+    "babel": "inherit",
+    "require": [
+      "babel-register"
+    ],
+    "files": [
+      "src/**/*.test.js"
+    ],
+    "source": [
+      "**/*.{js,jsx}",
+      "!dist/**/*"
+    ],
+    "tap": false,
+    "verbose": true,
+    "watch": false,
+    "serial": false,
+    "failFast": true
+  }
+}
