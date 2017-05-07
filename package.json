@@ -1,0 +1,26 @@
+{
+  "name": "livetasks",
+  "version": "1.0.0",
+  "description": "global installer for the Livetasks project",
+  "author": "Sharlaan <raphael.morineau@gmail.com>",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Sharlaan/Livetasks.git"
+  },
+  "bugs": {
+    "url": "https://github.com/Sharlaan/Livetasks/issues"
+  },
+  "engines": { "node": "7.x" },
+  "main": "index.js",
+  "scripts": {
+    "start": "",
+    "install": "run-p install:*",
+    "install:api": "start cd server  &&  yarn  &&  yarn start",
+    "install:database": "start createDB  &&  cd server  &&  yarn migrate",
+    "install:webapp": "start cd client  &&  yarn  &&  yarn start",
+    "postinstall": "opn http://localhost:3000",
+    "createdb": "createdb -U postgres livetasks"
+  },
+  "homepage": "https://github.com/Sharlaan/Livetasks#readme"
+}
