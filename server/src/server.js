@@ -7,7 +7,6 @@ import compression from 'compression'
 import bodyParser from 'body-parser'
 import websockets from 'socket.io'
 import { common } from './config/settings'
-import TasksPushNotifier from './controllers/TasksPushNotifier'
 import router from './router'
 
 /**
@@ -31,19 +30,7 @@ app.use(cors()) // Enable Cross-Origin Resource Sharing
  * for push notifications.
  */
 const io = websockets(server)
-io.on('connection', function (socket) {
-  console.log('client connect')
-  socket.broadcast.emit('onConnect', 'New client connected')
-
-  socket.on('connect', )
-  // Load routes (including websockets)
-  const tasksPushNotifier = new TasksPushNotifier(socket)
-  router(app, tasksPushNotifier)
-
-  socket.broadcast.on('onDisconnect', () => {
-    console.log('Client disconnected')
-  })
-})
+io.on('connect', router)
 
 /**
  * Event listener for HTTP server "error" event.

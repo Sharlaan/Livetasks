@@ -16,18 +16,24 @@
     <h1>Task manager</h1>
   </header>
 
-  <section id="task-container"></section>
+  <section id='root'></section>
+
+  <footer>
+    Made by <a href='https://github.com/Sharlaan?tab=repositories'>Sharlaan</a> © 2017. Tous droits réservés
+  </footer>
 
   <script src='https://cdnjs.cloudflare.com/ajax/libs/socket.io/1.7.3/socket.io.min.js'></script>
   <script src='js/App.js'></script>
   <script src='js/TaskGroup.js'></script>
   <script src='js/TaskGroupView.js'></script>
   <script>
-    document.addEventListener('DOMContentLoaded', function() {
-      const app = new App()
-      app.init()
-      app.load()
-    })
+    (function() {
+      document.addEventListener('DOMContentLoaded', function() {
+        const app = new App()
+        app.init()
+        app.load()
+      })
+    })()
   </script>
 </body>
 

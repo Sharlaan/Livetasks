@@ -1,3 +1,5 @@
+'use strict'
+
 function App () {
   /**
    * Set API and Socket URLs
@@ -10,9 +12,7 @@ function App () {
    * Set API and Socket ports
    * @type {Number}
    */
-  // this.CLIENT_PORT = 3000
   this.API_PORT = 3210
-  this.SOCKET_PORT = 8000
 
   this.baseApiUrl = `http://${this.API_URL}:${this.API_PORT}`
 
@@ -31,6 +31,7 @@ function App () {
    * Array of TaskGroup
    * @type {Array.<TaskGroup>}
    */
+  // TODO: Add some 'general' group at index 0
   this.groups = []
 }
 
@@ -38,7 +39,7 @@ function App () {
  * Init application: link to the dom and prepare data
  */
 App.prototype.init = function () {
-  this.container = document.getElementById('task-container')
+  this.container = document.getElementById('root')
   this.socket = io.connect(this.baseApiUrl) // eslint-disable-line no-undef
 }
 
@@ -47,56 +48,36 @@ App.prototype.init = function () {
  */
 App.prototype.load = function () {
   // Load group of tasks
-  /*
-  this.socket.emit('connect', data => {
-    // Assume one group of task for now. Next feature: allow multiple groups
-    const taskGroup = new TaskGroup(1, 'My tasks', this) // eslint-disable-line no-undef
-    if (taskGroup.init(this.container)) taskGroup.load(data)
-    this.groups.push(taskGroup)
-  })
-  */
-  fetch(`${this.baseApiUrl}/tasks`) // eslint-disable-line no-undef
-    .then(response => response.json())
-    .then(({data}) => {
+  this.socket.emit(
+    'getAllTasks',
+    null,
+    ({status, message, data}) => {
+      if (status === 'failed') return console.error('Error with getAllTasks fetch\n', message)
       // Assume one group of task for now. Next feature: allow multiple groups
-      const taskGroup = new TaskGroup(1, 'My tasks', this) // eslint-disable-line no-undef
+      const initialGroupID = 1
+      const taskGroup = new TaskGroup(initialGroupID, 'My tasks', this.baseApiUrl, this.socket) // eslint-disable-line no-undef
       if (taskGroup.init(this.container)) taskGroup.load(data)
-      this.groups.push(taskGroup)
-    })
-    .catch(error => console.error('Error with getAllTasks fetch\n', error))
+      this.groups[initialGroupID] = taskGroup
+    }
+  )
 
   // Listen to broadcasted tasks events
   this.socket.on('onConnect', () => {
     console.warn('New client connected')
   })
   this.socket.on('onTaskCreated', data => {
-    console.warn('Received event onTaskCreated', data)
+    console.warn('Received broadcasted event onTaskCreated\n', data)
+    const group = this.groups[data.group_id]
+    group.onTaskCreated(data)
   })
   this.socket.on('onTaskUpdated', data => {
-    console.warn('Received event onTaskUpdated', data)
+    console.warn('Received broadcasted event onTaskUpdated\n', data)
+    const group = this.groups[data.group_id]
+    group.onTaskUpdated(data)
   })
   this.socket.on('onTaskRemoved', data => {
-    console.warn('Received event onTaskRemoved', data)
+    console.warn('Received broadcasted event onTaskRemoved\n', data)
+    const group = this.groups[data.groupId]
+    group.onTaskRemoved(data.id)
   })
-
- /*  this.socket.on('tasks', (type, groupId, taskId, taskContent, taskFinished) => {
-    console.warn('Received event tasks')
-    for (let group of this.groups) {
-      if (group.id === groupId) {
-        switch (type) {
-          case 'create':
-            group.onTaskCreated(taskId)
-            break
-          case 'update':
-            group.onTaskUpdated(taskId, taskContent, taskFinished)
-            break
-          case 'remove':
-            group.onTaskRemoved(taskId)
-            break
-          default: break
-        }
-      }
-    }
-  })
-  */
 }

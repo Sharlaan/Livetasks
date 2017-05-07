@@ -35,7 +35,7 @@ export default class Task {
    * @param {number} id Unique identifier
    * @param {string} content Name
    * @param {boolean} status True to set as finished, otherwise false
-   * @return {Promise} promise (id, group_id, content, created_at, deleted_at, finished_at)
+   * @return {Promise} promise (id, group_id, content, created_at, finished_at)
    */
   static update (id, content, status) {
     return db.one(tasksQueries.update.query, [id, content, status])

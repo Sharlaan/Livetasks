@@ -16,16 +16,7 @@ Enjoy the [Demo](https://git.ideolys.com/ideolys/livetask-raphael-morineau) !
 
 
 #### Architecture and Technologies
-1st attempt: REST + Websockets in client requests callback
-works but high communication load between server and clients (2x per request: once for initial REST endpoint + persistance into DB, then a second from client to notify server to broadcast on success)
-
-2nd attempt: Websockets only
-doesnot work, hard to initialize, not future-proof if need REST later
 [Why not a Websockets only website ?](http://stackoverflow.com/questions/4852702/do-html-websockets-maintain-an-open-connection-for-each-client-does-this-scale)
-
-3rd attempt: mix of the 2 above
-REST requests => server psersist data in DB + calls socket.io to broadcast to other clients =>  other clients listen socket.on('event', message)
-Using websockets only for server => client way sounds ideal but couldnot get the current request's ID to map it to a socket ID, so socket.io know who to NOT broadcast.
 
 #### Installation
 1. Make sure node7+ and PostgreSQL are installed:
@@ -58,14 +49,13 @@ Note: if database name(s) exists already on your system, you may want to use the
 Next use the dump to create and populate the tables:
 ```sh
 yarn migrate
-or
-psql -U postgres livetasks < .\src\config\database\schemes\livetasks_dump.sql
 ```
-Sidenote: database livetasks were dumped with:
+Sidenote: database livetasks could be dumped with:
 ```sh
-pg_dump -U postgres livetasks > .\src\config\database\schemes\livetasks_dump.sql
+pg_dump -U postgres livetasks > .\src\config\database\schemes\schemeTasks.sql
 ```
-
+but better to write the scheme myself :)
+/!\ Important: make sure nothing is using current livetasks DB (especially your IDE), or else Postgres might hang without warning ...
 
 #### Usage
 Run the server:

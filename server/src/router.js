@@ -1,16 +1,20 @@
-import { Router } from 'express'
 import tasksController from './controllers/TasksController'
 // import tchatController from './controllers/TchatController'
 
-export default function router (app, tasksPushNotifier) {
-  const tasksRouter = Router()
-  // const tchatRouter = Router()
+export default function (socket) {
+  console.log('client connect')
+  socket.broadcast.emit('onConnect', 'New client connected')
 
-  tasksRouter
-    .get('/tasks', tasksController.all, tasksPushNotifier.newClient)
-    .post('/tasks', tasksController.create, tasksPushNotifier.create)
-    .patch('/tasks', tasksController.update, tasksPushNotifier.update)
-    .delete('/tasks', tasksController.remove, tasksPushNotifier.remove)
+  socket.on('getAllTasks', tasksController.all)
 
-  app.use('/', tasksRouter)
+  socket.on('createTask', tasksController.create)
+
+  socket.on('updateTask', tasksController.update)
+
+  socket.on('removeTask', tasksController.remove)
+
+  socket.on('onDisconnect', () => {
+    console.log('Client disconnected')
+    socket.broadcast.emit('onDisconnect', 'Client disconnected')
+  })
 }
