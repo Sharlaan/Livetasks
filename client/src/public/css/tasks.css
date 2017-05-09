@@ -48,7 +48,7 @@ input {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  box-shadow: rgb(150, 150, 150) 0px 4px 9px;
+  box-shadow: rgb(150, 150, 150) 0 4px 9px;
   opacity: 0;
   visibility: hidden;
   transition: visibility 250ms, opacity 250ms linear; /* transitions does not work on display property */

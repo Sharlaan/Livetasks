@@ -6,10 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Sharlaan/Livetasks.git"
-  },
-  "bugs": {
-    "url": "https://github.com/Sharlaan/Livetasks/issues"
+    "url": "https://github.com/Sharlaan/Livetasks.git"
   },
   "engines": {
     "node": "7.x"

@@ -199,6 +199,7 @@ TaskGroupView.prototype.createTask = function (id, content, status, justCreated 
     switch (event.key) {
       case 'Escape':
         this.dataset.cancel = true
+      // eslint-disable-next-line no-fallthrough
       case 'Enter':
         this.blur() // Triggers event defined above
         break

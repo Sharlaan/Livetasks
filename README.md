@@ -2,7 +2,7 @@
 
 Livetasks is a collaborative realtime TODOs manager, forked from [this project](https://github.com/DonoSybrix/TodoList).  
 Enjoy the [Demo]() ! (not deployed yet)  
-![](https://github.com/Sharlaan/Livetasks/blob/master/Capture.png)
+![](https://git.ideolys.com/ideolys/livetask-raphael-morineau/blob/master/Capture.png)
 
 #### Table of Contents
 - [Architecture and Technologies](#Architecture-and-Technologies)
@@ -19,7 +19,7 @@ This project is organised with microservices in mind, into 3 sub-projects:
 - one for the postgresql datatable*
 
 \* for now, datatable structure is integrated inside the api project.  
-TODO: extract db-related commands, settings and queries inot its own repository.
+TODO: extract db-related commands, settings and queries into its own repository.
 
 Interesting arguments against Websockets: [Why not a Websockets only website ?](http://stackoverflow.com/questions/4852702/do-html-websockets-maintain-an-open-connection-for-each-client-does-this-scale)
 
