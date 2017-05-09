@@ -1,13 +1,26 @@
 {
-  "name": "livetask-client",
+  "name": "livetask-webapp",
   "version": "1.0.0",
-  "description": "static server to serve the client-side interface",
-  "main": "index.js",
-  "scripts": {
-    "start": "nodemon index"
-  },
+  "description": "Static server to serve the client-side interface",
+  "keywords": [
+    "TODO",
+    "tchat",
+    "websocket",
+    "vanilla",
+    "MVVM"
+  ],
   "author": "Sharlaan <raphael.morineau@gmail.com>",
   "license": "MIT",
+  "main": "index.js",
+  "scripts": {
+    "postinstall": "npm run start:prod",
+    "start": "nodemon src/index",
+    "start:prod": "cross-env NODE_ENV=production run-s clean build runprod",
+    "runprod": "pm2 start dist/index.js --name \"livetasks-webapp\"",
+    "clean": "del-cli dist/*",
+    "build": "babel src/ -d dist -s --copy-files",
+    "lint": "eslint src"
+  },
   "dependencies": {
     "express": "^4.15.2",
     "moment": "^2.18.1"
@@ -15,11 +28,51 @@
   "devDependencies": {
     "babel-cli": "^6.24.1",
     "babel-eslint": "^7.2.3",
+    "babel-plugin-transform-object-rest-spread": "^6.23.0",
     "babel-polyfill": "^6.23.0",
     "babel-preset-env": "^1.4.0",
     "cross-env": "^4.0.0",
+    "del-cli": "^0.2.1",
     "eslint": "^3.19.0",
     "nodemon": "^1.11.0",
+    "npm-run-all": "^4.0.2",
     "standard": "^10.0.2"
+  },
+  "babel": {
+    "presets": [
+      [
+        "env",
+        {
+          "targets": {
+            "browsers": [
+              "last 2 versions",
+              "> 3%"
+            ]
+          },
+          "modules": "commonjs",
+          "debug": false
+        }
+      ]
+    ],
+    "plugins": [
+      [
+        "transform-object-rest-spread",
+        {
+          "useBuiltIns": true
+        }
+      ]
+    ],
+    "env": {
+      "development": {
+        "sourceMaps": "inline"
+      }
+    }
+  },
+  "standard": {
+    "parser": "babel-eslint"
+  },
+  "eslintConfig": {
+    "extends": "standard",
+    "parser": "babel-eslint"
   }
 }

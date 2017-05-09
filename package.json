@@ -1,5 +1,5 @@
 {
-  "name": "livetasks",
+  "name": "livetask-raphael-morineau",
   "version": "1.0.0",
   "description": "global installer for the Livetasks project",
   "author": "Sharlaan <raphael.morineau@gmail.com>",
@@ -11,16 +11,24 @@
   "bugs": {
     "url": "https://github.com/Sharlaan/Livetasks/issues"
   },
-  "engines": { "node": "7.x" },
+  "engines": {
+    "node": "7.x"
+  },
   "main": "index.js",
   "scripts": {
-    "start": "",
-    "install": "run-p install:*",
-    "install:api": "start cd server  &&  yarn  &&  yarn start",
-    "install:database": "start createDB  &&  cd server  &&  yarn migrate",
-    "install:webapp": "start cd client  &&  yarn  &&  yarn start",
-    "postinstall": "opn http://localhost:3000",
-    "createdb": "createdb -U postgres livetasks"
+    "removedb": "psql -U postgres -d livetasks -c \"SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = 'livetasks'\" -d postgres -c \"DROP DATABASE livetasks\"",
+    "createdb": "createdb -U postgres livetasks",
+    "populatedb": "psql -U postgres livetasks < ./server/src/config/database/schemes/schemeTasks.sql",
+    "pinstall": "run-p install:*",
+    "install:database": "run-s createdb populatedb",
+    "install:api": "start  cd server  &&  npm i  &&  npm start",
+    "install:webapp": "start  cd client  &&  npm i  &&  npm start",
+    "start": "npm run openBrowser",
+    "openBrowser": "opn http://localhost:3000"
   },
-  "homepage": "https://github.com/Sharlaan/Livetasks#readme"
+  "homepage": "https://github.com/Sharlaan/Livetasks#readme",
+  "dependencies": {
+    "npm-run-all": "^4.0.2",
+    "opn-cli": "^3.1.0"
+  }
 }

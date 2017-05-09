@@ -1,7 +1,7 @@
 {
-  "name": "livetask-raphael-morineau",
+  "name": "livetask-api",
   "version": "1.0.0",
-  "description": "Realtime TODO list",
+  "description": "Dynamic stateless server to serve data from database and broadcast websocket events",
   "keywords": [
     "TODO",
     "tchat",
@@ -19,10 +19,13 @@
     "node": "7.x"
   },
   "scripts": {
-    "migrate": "psql -U postgres livetasks < ./src/config/database/schemes/schemeTasks.sql",
+    "migrate": "babel-node -- src/config/database/migrate",
+    "removedb": "babel-node -- src/config/database/removedb",
+    "testdb": "psql -U postgres -d livetasks -c \"SELECT * from tasks\"",
+    "postinstall": "run-p migrate start:prod",
     "start": "cross-env NODE_ENV=development nodemon --delay 2 --exec babel-node -- src/server.js",
     "start:prod": "cross-env NODE_ENV=production run-s clean build runprod",
-    "runprod": "pm2 start dist/server.js --name \"livetasks\"",
+    "runprod": "pm2 start dist/server.js --name \"livetasks-api\"",
     "clean": "del-cli dist/*",
     "build": "babel src/ -d dist -s --copy-files",
     "format": "prettier --single-quote true --no-semi --write 'src/**/*.js'",
@@ -85,7 +88,7 @@
         }
       ]
     ],
-    "ignore": "tests/**/*.spec.js",
+    "ignore": "*.spec.js",
     "env": {
       "development": {
         "sourceMaps": "inline"

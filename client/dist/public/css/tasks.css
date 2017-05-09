@@ -114,10 +114,12 @@ input {
 
 .task-container .task-list .task .taskContent:read-only {
   cursor: pointer;
+  background-color: transparent;
 }
 
 .task-container .task-list .task .taskContent:not(:read-only):focus {
   cursor: default;
+  background-color: white;
   border: 1px solid blue;
   border-radius: 5px;
 }

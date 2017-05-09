@@ -159,6 +159,7 @@ TaskGroupView.prototype.createTask = function (id, content, status, justCreated 
   let contentInput = document.createElement('input')
   contentInput.type = 'text'
   contentInput.dataset.currentContent = content
+  contentInput.dataset.cancel = false
   contentInput.value = content
   contentInput.readOnly = true
   contentInput.className = 'taskContent'
@@ -182,6 +183,12 @@ TaskGroupView.prototype.createTask = function (id, content, status, justCreated 
     const id = task.dataset.id
     const newContent = ct.value
     const checked = JSON.parse(checkbox.dataset.checked) // /!\ data-* value is always a string
+    // Prevent useless server call and overwrite value with old value
+    if (ct.dataset.cancel) {
+      ct.value = currentContent
+      ct.dataset.cancel = false
+      return
+    }
     // Prevent useless server call
     if (newContent !== currentContent) {
       // console.log('Event triggered @ TaskGroupView createTask: newContent', newContent)
@@ -191,6 +198,7 @@ TaskGroupView.prototype.createTask = function (id, content, status, justCreated 
   contentInput.addEventListener('keyup', function (event) {
     switch (event.key) {
       case 'Escape':
+        this.dataset.cancel = true
       case 'Enter':
         this.blur() // Triggers event defined above
         break
@@ -204,7 +212,8 @@ TaskGroupView.prototype.createTask = function (id, content, status, justCreated 
   task.appendChild(actionsBox)
 
   let editButton = document.createElement('button')
-  editButton.innerHTML = '<i class="material-icons edit">mode_edit</i>' // or 'input'
+  editButton.className = 'edit'
+  editButton.innerHTML = '<i class="material-icons">mode_edit</i>' // or 'input'
   editButton.title = 'Edit'
   editButton.addEventListener('click', event => {
     event.stopPropagation() // necessary to prevent triggering task.click() by bubbling
@@ -216,7 +225,8 @@ TaskGroupView.prototype.createTask = function (id, content, status, justCreated 
   actionsBox.appendChild(editButton)
 
   let removeButton = document.createElement('button')
-  removeButton.innerHTML = '<i class="material-icons remove">clear</i>'
+  removeButton.className = 'remove'
+  removeButton.innerHTML = '<i class="material-icons">clear</i>'
   removeButton.title = 'Delete'
   removeButton.addEventListener('click', event => {
     event.stopPropagation()
@@ -228,7 +238,7 @@ TaskGroupView.prototype.createTask = function (id, content, status, justCreated 
 
   this.taskContainer.insertBefore(task, this.taskContainer.firstChild)
   // Give focus to the content input for the user-created task
-  if (justCreated) task.querySelector('i.edit').click()
+  if (justCreated) task.getElementsByClassName('edit')[0].click()
 }
 
 /**
