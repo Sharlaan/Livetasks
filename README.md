@@ -2,7 +2,7 @@
 
 Livetasks is a collaborative realtime TODOs manager, forked from [this project](https://github.com/DonoSybrix/TodoList).  
 Enjoy the [Demo]() ! (not deployed yet)  
-![](https://git.ideolys.com/ideolys/livetask-raphael-morineau/blob/master/Capture.png)
+![](https://github.com/Sharlaan/Livetasks/blob/master/Capture.png)
 
 #### Table of Contents
 - [Architecture and Technologies](#Architecture-and-Technologies)
