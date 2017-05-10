@@ -4,9 +4,10 @@
   "description": "global installer for the Livetasks project",
   "author": "Sharlaan <raphael.morineau@gmail.com>",
   "license": "MIT",
+  "homepage": "https://github.com/Sharlaan/Livetasks#readme",
   "repository": {
     "type": "git",
-    "url": "https://rmorineau@git.ideolys.com/ideolys/livetask-raphael-morineau.git"
+    "url": "https://github.com/Sharlaan/Livetasks.git"
   },
   "engines": {
     "node": "7.x"
@@ -23,7 +24,6 @@
     "start": "npm run openBrowser",
     "openBrowser": "opn http://localhost:3000"
   },
-  "homepage": "https://github.com/Sharlaan/Livetasks#readme",
   "dependencies": {
     "npm-run-all": "^4.0.2",
     "opn-cli": "^3.1.0"
