@@ -94,6 +94,7 @@ TaskGroupView.prototype.create = function (container) {
       Add new task
     </button>`
   actionsMenu.className = 'actionsMenu'
+  // visibility+opacity hack necessary because 'transition' does not work with 'display'
   actionsMenu.addEventListener('click', event => {
     event.stopPropagation()
     event.currentTarget.style.visibility = 'hidden' // make this as class 'closeMenu' ?
@@ -157,7 +158,7 @@ TaskGroupView.prototype.createTask = function (id, content, status, justCreated 
   task.appendChild(statusCheckbox)
 
   let contentInput = document.createElement('input')
-  contentInput.type = 'text'
+  contentInput.maxLength = 250
   contentInput.dataset.currentContent = content
   contentInput.dataset.cancel = false
   contentInput.value = content
@@ -170,10 +171,13 @@ TaskGroupView.prototype.createTask = function (id, content, status, justCreated 
     const isEditing = !this.readOnly
     if (isEditing) event.stopPropagation()
   })
-  // Save previous value before editing
+  // Save previous value before user actually edit the value
   contentInput.addEventListener('focus', function () {
     const isEditing = !this.readOnly
-    if (isEditing) this.dataset.currentContent = this.value
+    if (isEditing) {
+      this.dataset.currentContent = this.value
+      this.classList.remove('strike')
+    }
   })
   contentInput.addEventListener('blur', ({currentTarget: ct}) => {
     ct.readOnly = true
@@ -183,8 +187,9 @@ TaskGroupView.prototype.createTask = function (id, content, status, justCreated 
     const id = task.dataset.id
     const newContent = ct.value
     const checked = JSON.parse(checkbox.dataset.checked) // /!\ data-* value is always a string
+    if (checked) ct.classList.add('strike')
     // Prevent useless server call and overwrite value with old value
-    if (ct.dataset.cancel) {
+    if (JSON.parse(ct.dataset.cancel)) {
       ct.value = currentContent
       ct.dataset.cancel = false
       return
@@ -197,11 +202,12 @@ TaskGroupView.prototype.createTask = function (id, content, status, justCreated 
   })
   contentInput.addEventListener('keyup', function (event) {
     switch (event.key) {
+      case 'Esc': // 'Escape' not recognised in Edge
       case 'Escape':
         this.dataset.cancel = true
       // eslint-disable-next-line no-fallthrough
       case 'Enter':
-        this.blur() // Triggers event defined above
+        this.blur() // Triggers indirectly the contentInput blur event defined above
         break
       default: break
     }
@@ -220,7 +226,7 @@ TaskGroupView.prototype.createTask = function (id, content, status, justCreated 
     event.stopPropagation() // necessary to prevent triggering task.click() by bubbling
     const task = event.currentTarget.parentElement.parentElement
     const contentInput = task.children[1]
-    contentInput.readOnly = false
+    contentInput.removeAttribute('readonly')
     contentInput.focus()
   })
   actionsBox.appendChild(editButton)
@@ -237,9 +243,12 @@ TaskGroupView.prototype.createTask = function (id, content, status, justCreated 
   })
   actionsBox.appendChild(removeButton)
 
-  this.taskContainer.insertBefore(task, this.taskContainer.firstChild)
-  // Give focus to the content input for the user-created task
-  if (justCreated) task.getElementsByClassName('edit')[0].click()
+  if (justCreated) {
+    this.taskContainer.insertBefore(task, this.taskContainer.firstChild)
+    // Give focus to the content input for the user-created task
+    task.getElementsByClassName('edit')[0].click()
+  } // eslint-disable-line brace-style
+  else this.taskContainer.appendChild(task)
 }
 
 /**
@@ -249,6 +258,7 @@ TaskGroupView.prototype.createTask = function (id, content, status, justCreated 
  * @param {string} finished_at - Completion date
  */
 TaskGroupView.prototype.updateTask = function (id, content, finished_at) {
+  // TODO: onJustCreated, remove 1st temp task to insert it at correct position (without sorting the whole tasklist)
   let task = document.getElementById(`task-${id}`)
   if (!task) return
   const statusCheckbox = task.firstChild

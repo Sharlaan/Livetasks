@@ -144,8 +144,7 @@ TaskGroup.prototype.removeTask = function (id) {
 
   this.socket.emit('removeTask', JSON.stringify({ groupId: this.id, id: id }), function (_ref4) {
     var status = _ref4.status,
-        message = _ref4.message,
-        data = _ref4.data;
+        message = _ref4.message;
 
     if (status === 'failed') return console.error('Error with removeTask fetch\n', message);
     // console.log'removeTask data', data)

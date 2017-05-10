@@ -58,6 +58,19 @@ TaskGroup.prototype.init = function (container) {
  * @param {Array.<Object>} tasks - The tasks
  */
 TaskGroup.prototype.load = function (tasks) {
+  // Sort tasks by finished_at then by created_at properties
+  // sort order: "oldest has priority"
+  tasks.sort(function (a, b) {
+    const af = new Date(a.finished_at)
+    const bf = new Date(b.finished_at)
+    const ac = new Date(a.created_at)
+    const bc = new Date(b.created_at)
+
+    if (af < bf) return -1
+    if (af > bf) return 1
+    if (ac < bc) return -1
+    if (ac > bc) return 1
+  })
   // Load tasks
   this.tasks = tasks
   // Create views

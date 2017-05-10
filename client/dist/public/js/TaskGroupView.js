@@ -156,6 +156,7 @@ TaskGroupView.prototype.createTask = function (id, content, status) {
   var contentInput = document.createElement('input');
   contentInput.type = 'text';
   contentInput.dataset.currentContent = content;
+  contentInput.dataset.cancel = false;
   contentInput.value = content;
   contentInput.readOnly = true;
   contentInput.className = 'taskContent';
@@ -171,8 +172,8 @@ TaskGroupView.prototype.createTask = function (id, content, status) {
     var isEditing = !this.readOnly;
     if (isEditing) this.dataset.currentContent = this.value;
   });
-  contentInput.addEventListener('blur', function (event) {
-    var ct = event.currentTarget;
+  contentInput.addEventListener('blur', function (_ref2) {
+    var ct = _ref2.currentTarget;
 
     ct.readOnly = true;
     var task = ct.parentElement;
@@ -182,10 +183,10 @@ TaskGroupView.prototype.createTask = function (id, content, status) {
     var newContent = ct.value;
     var checked = JSON.parse(checkbox.dataset.checked); // /!\ data-* value is always a string
     // Prevent useless server call and overwrite value with old value
-    console.log(event);
-    if (event.key === 'Escape') {
+    if (ct.dataset.cancel) {
       ct.value = currentContent;
-      return false;
+      ct.dataset.cancel = false;
+      return;
     }
     // Prevent useless server call
     if (newContent !== currentContent) {
@@ -196,10 +197,10 @@ TaskGroupView.prototype.createTask = function (id, content, status) {
   contentInput.addEventListener('keyup', function (event) {
     switch (event.key) {
       case 'Escape':
-        this.blur(true); // Triggers event defined above
-        break;
+        this.dataset.cancel = true;
+      // eslint-disable-next-line no-fallthrough
       case 'Enter':
-        this.blur();
+        this.blur(); // Triggers event defined above
         break;
       default:
         break;
@@ -212,7 +213,8 @@ TaskGroupView.prototype.createTask = function (id, content, status) {
   task.appendChild(actionsBox);
 
   var editButton = document.createElement('button');
-  editButton.innerHTML = '<i class="material-icons edit">mode_edit</i>'; // or 'input'
+  editButton.className = 'edit';
+  editButton.innerHTML = '<i class="material-icons">mode_edit</i>'; // or 'input'
   editButton.title = 'Edit';
   editButton.addEventListener('click', function (event) {
     event.stopPropagation(); // necessary to prevent triggering task.click() by bubbling
@@ -224,7 +226,8 @@ TaskGroupView.prototype.createTask = function (id, content, status) {
   actionsBox.appendChild(editButton);
 
   var removeButton = document.createElement('button');
-  removeButton.innerHTML = '<i class="material-icons remove">clear</i>';
+  removeButton.className = 'remove';
+  removeButton.innerHTML = '<i class="material-icons">clear</i>';
   removeButton.title = 'Delete';
   removeButton.addEventListener('click', function (event) {
     event.stopPropagation();
@@ -236,7 +239,7 @@ TaskGroupView.prototype.createTask = function (id, content, status) {
 
   this.taskContainer.insertBefore(task, this.taskContainer.firstChild);
   // Give focus to the content input for the user-created task
-  if (justCreated) task.getElementsByClassName('edit').click();
+  if (justCreated) task.getElementsByClassName('edit')[0].click();
 };
 
 /**

@@ -2,12 +2,14 @@
 
 Livetasks is a collaborative realtime TODOs manager, forked from [this project](https://github.com/DonoSybrix/TodoList).  
 Enjoy the [Demo]() ! (not deployed yet)  
-![](https://github.com/Sharlaan/Livetasks/blob/master/Capture.png)
+![](https://git.ideolys.com/ideolys/livetask-raphael-morineau/blob/master/Capture.png)
 
 #### Table of Contents
 - [Architecture and Technologies](#Architecture-and-Technologies)
 - [Installation](#Installation)
 - [Usage](#Usage)
+- [Build](#Build)
+- [Known issues](#Known-issues)
 
 
 #### Architecture and Technologies
@@ -30,8 +32,8 @@ node -v && psql -V
 ```
 Both commands should yield a finite version number.  
 (resp. v7.10.0 and v9.6.2 in my case)  
-Note: for your convenience, make sure the symbolic link 'psql' is in your PATH.
-
+Note: for your convenience, make sure the symbolic link 'psql' is in your PATH.  
+  
 
 2. Install globally yarn and pm2:  
 ```sh
@@ -47,12 +49,14 @@ cd livetasks
 
 
 4. Install API server  
-Open a new CLI in /server folder, then run:
+Open a new CLI in /server folder  
+Firstly, you may want to configure names, ports and password @ `server/src/config/settings.js`  
+then run:
 ```sh
 yarn
 ```
-4 bis. If the command above fails, verify dependencies have bnee correctly installed  
-then create PostgreSQL database 'livetasks':
+4-bis. If the command above fails, verify dependencies have been correctly installed  
+then, in 'server' CLI, create PostgreSQL database 'livetasks':
 ```sh
 yarn migrate
 ```
@@ -97,11 +101,12 @@ either click on menu in upper-right corner of the task list,
 or click on the big + button.
 - Remove a task: click on the X button (right side of each task).  
 Note: the task won't be permanently deleted, but 'suspended', so an administrator can retrieve/restore it.
-- Update a task status by clicking on it. This will toggle the task's status.  
+- Update a task status by clicking on it. This will toggle the task's status and increment/decrement the counter.  
 The task's content can also be edited by clicking on the edit button (pen icon next to X icon).  
-You can also use 'Enter' to validate an edited value, or 'Escape' to cancel.
+To validate an edited value, you can use 'Enter' or click away from the input; 'Escape' will cancel.
 
 Addition/Deletion of a task will be notified with a counter in upper-right corner.
+Hovering this counter will tell current % of completion.
 
 ###### Server-side testing:
 ```sh
@@ -111,3 +116,22 @@ yarn test
 ```sh
 yarn coverage
 ```
+
+
+#### Build
+If you want to play in development mode, first stop the server and client processes with:
+```sh
+pm2 ls
+pm2 stop all
+pm2 delete all
+pm2 kill
+```
+Next, run `yarn start` on each server and client CLIs:  
+this will run both servers with nodemon in automatic watch mode.
+// TODO: use Webpack
+
+
+#### Known issues
+Compatibility issues:
+- hovering the taskgroup menu buttons does not change the background in Firefox (does not support rgba+hover?)
+- read-only input in Firefox still display a cursor inside

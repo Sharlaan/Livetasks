@@ -6,7 +6,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/Sharlaan/Livetasks.git"
+    "url": "https://rmorineau@git.ideolys.com/ideolys/livetask-raphael-morineau.git"
   },
   "engines": {
     "node": "7.x"
