@@ -4,6 +4,9 @@ input {
 
 button {
   background-color: #eaedf2;
+  height: 36px;
+  width: 36px;
+  display: flex;
 }
 
 .task-container {
@@ -13,12 +16,14 @@ button {
   margin: 0 auto;
   background-color: white;
   padding: 20px;
-  box-shadow: rgb(150, 150, 150) 0 4px 9px;
+  box-shadow: var(--shadow-elevation-2dp);
+  /* box-shadow: rgb(150, 150, 150) 0 4px 9px; */
 }
 
 .task-container .task-group-header {
   padding-bottom: 15px;
   display: flex;
+  position: relative;
   justify-content: flex-end;
   align-items: center;
 }
@@ -32,13 +37,12 @@ button {
 }
 
 .task-container .task-group-header .actionsMenuButton {
-  display: flex;
-  position: relative;
   margin-left: 10px;
   border: none;
+  border-radius: 50%;
   color: rgba(0, 0, 0, 0.5);
   background-color: rgba(234, 237, 242, 0); /* #eaedf2 */
-  transition: all 250ms linear;
+  transition: var(--hover-transition);
 }
 
 .task-container .task-group-header .actionsMenuButton:hover {
@@ -47,39 +51,36 @@ button {
   background-color: rgba(234, 237, 242, 1);
 }
 
-.task-container .task-group-header .actionsMenuButton .actionsMenu {
-  z-index: 2;
+.task-container .task-group-header .actionsMenu {
+  z-index: 1;
   position: absolute;
+  top: 0;
   right: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  background-color: white; /* necessary to prevent "click-through" with a solid backgroundcolor */
-  box-shadow: rgb(150, 150, 150) 0 4px 9px;
+  box-shadow: var(--shadow-elevation-4dp);
   opacity: 0;
   visibility: hidden;
   transition: visibility 250ms, opacity 250ms linear; /* transitions does not work on display property */
 }
 
-.task-container .task-group-header .actionsMenuButton .actionsMenu button {
-  display: flex;
+.task-container .task-group-header .actionsMenu button {
   align-items: center;
   white-space: nowrap;
   padding: 10px;
+  height: auto;
   width: 100%;
   border: none;
   border-left: 4px solid white;
   background-color: white;
-  transition: all 250ms linear;
+  transition: var(--hover-transition);
 }
 
-.task-container .task-group-header .actionsMenuButton .actionsMenu button:hover {
+.task-container .task-group-header .actionsMenu button:hover {
   cursor: pointer;
   border-left: 4px solid CornFlowerBlue;
   background-color: #eaedf2;
 }
 
-.task-container .task-group-header .actionsMenuButton .actionsMenu button i {
+.task-container .task-group-header .actionsMenu button i {
   margin-right: 10px;
 }
 
@@ -87,7 +88,7 @@ button {
   margin: 0;
   padding: 0;
   list-style-type: none;
-  transition: all 250ms linear;
+  transition: var(--hover-transition);
 }
 
 .task-container .task-list .task {
@@ -97,7 +98,7 @@ button {
   border-bottom: 1px solid rgba(150,150,150,0.5);
   border-top: 1px solid rgba(150,150,150,0.5);
   padding: 5px;
-  transition: all 500ms linear;
+  transition: var(--hover-transition);
   opacity: 0.5;
 }
 
@@ -106,7 +107,6 @@ button {
   cursor: pointer;
   opacity: 1;
   background-color: rgba(234, 237, 242, 0.25);
-  transition: all 250ms linear;
   border-bottom-color: CornFlowerBlue;
   border-top-color: CornFlowerBlue;
 }
@@ -133,26 +133,44 @@ button {
   border: 1px solid blue;
   border-radius: 5px;
 }
+.task-container .task-list .task .actionsBox {
+  display: flex;
+}
 
 .task-container .task-list .task .actionsBox button {
   border: none;
+  margin: 0 5px;
+  border-radius: 50%;
   cursor: pointer;
-  transition: all 250ms linear;
+  transition: var(--hover-transition);
   opacity: 0;
 }
 
 .task-container .task-list .task:hover .actionsBox button {
-  opacity: 0.5;
+  opacity: 1;
 }
 
 .task-container .task-list .task:hover .actionsBox button:hover {
-  opacity: 1;
+  color: white;
+}
+
+.task-container .task-list .task:hover .actionsBox button.edit:hover {
+  background-color: cornflowerblue;
+}
+
+.task-container .task-list .task:hover .actionsBox button.remove:hover {
+  background-color: orangered;
 }
 
 .strike {
   text-decoration: line-through;
 }
 
-.hide {
+.hideCheckbox {
   visibility: hidden;
+}
+
+.showMenu {
+  visibility: visible !important;
+  opacity: 1 !important;
 }

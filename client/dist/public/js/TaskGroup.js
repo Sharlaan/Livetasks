@@ -59,6 +59,19 @@ TaskGroup.prototype.init = function (container) {
  * @param {Array.<Object>} tasks - The tasks
  */
 TaskGroup.prototype.load = function (tasks) {
+  // Sort tasks by finished_at then by created_at properties
+  // sort order: "oldest has priority"
+  tasks.sort(function (a, b) {
+    var af = new Date(a.finished_at);
+    var bf = new Date(b.finished_at);
+    var ac = new Date(a.created_at);
+    var bc = new Date(b.created_at);
+
+    if (af < bf) return -1;
+    if (af > bf) return 1;
+    if (ac < bc) return -1;
+    if (ac > bc) return 1;
+  });
   // Load tasks
   this.tasks = tasks;
   // Create views
@@ -163,8 +176,14 @@ TaskGroup.prototype.onTaskCreated = function (_ref5) {
       content = _ref5.content,
       created_at = _ref5.created_at;
 
-  this.tasks.push({ id: id, content: content, created_at: created_at, finished_at: null, deleted_at: null });
-  this.view.createTask(id, content, false, true);
+  // Give the sorting policy, the newly created task will be inserted
+  // at index before the first "done" task.
+  var index = this.tasks.findIndex(function (task) {
+    return task.finished_at !== null;
+  });
+  var index2insert = index !== -1 ? index : this.tasks.length - 1;
+  this.tasks.splice(index2insert === 0 ? 0 : index2insert - 1, 0, { id: id, content: content, created_at: created_at, finished_at: null, deleted_at: null });
+  this.view.createTask(id, content, false, index2insert);
   this.view.updateCompletion(this.countRemainingTasks(), this.tasks.length);
 };
 

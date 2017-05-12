@@ -141,8 +141,16 @@ TaskGroup.prototype.removeTask = function (id) {
  * @param {Date} created_at - Date of creation
  */
 TaskGroup.prototype.onTaskCreated = function ({ id, content, created_at }) {
-  this.tasks.push({id, content, created_at, finished_at: null, deleted_at: null})
-  this.view.createTask(id, content, false, true)
+  // Give the sorting policy, the newly created task will be inserted
+  // at index before the first "done" task.
+  const index = this.tasks.findIndex(task => task.finished_at !== null)
+  const index2insert = index !== -1 ? index : (this.tasks.length - 1)
+  this.tasks.splice(
+    index2insert === 0 ? 0 : (index2insert - 1),
+    0,
+    {id, content, created_at, finished_at: null, deleted_at: null}
+  )
+  this.view.createTask(id, content, false, index2insert)
   this.view.updateCompletion(this.countRemainingTasks(), this.tasks.length)
 }
 
@@ -186,6 +194,7 @@ TaskGroup.prototype.onTaskRemoved = function (id) {
  */
 TaskGroup.prototype.countRemainingTasks = function () {
   return this.tasks.reduce((total, task) => {
-    return total += task.finished_at === null ? 1 : 0 // eslint-disable-line no-return-assign
+    total += task.finished_at === null ? 1 : 0
+    return total
   }, 0)
 }

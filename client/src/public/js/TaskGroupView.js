@@ -59,23 +59,16 @@ TaskGroupView.prototype.create = function (container) {
   actionsMenuButton.innerHTML = '<i class="material-icons">more_vert</i>'
   actionsMenuButton.className = 'actionsMenuButton'
   actionsMenuButton.addEventListener('click', function () {
-    const menu = this.children[1]
-    menu.style.visibility = 'visible' // make this as class 'showMenu' ?
-    menu.style.opacity = 1
+    const menu = this.parentElement.children[3]
+    menu.classList.toggle('showMenu')
   })
   actionsMenuButton.addEventListener('keyup', function (event) {
-    const menu = this.children[1]
-    if (event.key === 'Escape') {
-      menu.style.visibility = 'hidden' // make this as class 'closeMenu' ?
-      menu.style.opacity = 0
-    }
+    const menu = this.parentElement.children[3]
+    if (event.key === 'Escape') menu.classList.toggle('showMenu')
   })
   actionsMenuButton.addEventListener('blur', function (event) {
-    const menu = this.children[1]
-    if (!this.contains(event.relatedTarget)) {
-      menu.style.visibility = 'hidden' // make this as class 'closeMenu' ?
-      menu.style.opacity = 0
-    }
+    const menu = this.parentElement.children[3]
+    if (!menu.contains(event.relatedTarget)) menu.classList.toggle('showMenu')
   })
   headerDiv.appendChild(actionsMenuButton)
 
@@ -84,7 +77,7 @@ TaskGroupView.prototype.create = function (container) {
     <button class='create-group'>
       <i class='material-icons'>playlist_add</i>
       Create new group of tasks<br/>(un-implemented)
-    </button></li>
+    </button>
     <button class='edit-group-title'>
       <i class='material-icons'>input</i>
       Edit this group's title<br/>(un-implemented)
@@ -96,13 +89,14 @@ TaskGroupView.prototype.create = function (container) {
   actionsMenu.className = 'actionsMenu'
   // visibility+opacity hack necessary because 'transition' does not work with 'display'
   actionsMenu.addEventListener('click', event => {
-    event.stopPropagation()
-    event.currentTarget.style.visibility = 'hidden' // make this as class 'closeMenu' ?
-    event.currentTarget.style.opacity = 0
+    event.currentTarget.classList.toggle('showMenu')
 
-    if (event.target.classList.contains('add-new-task')) this.model.createTask('')
+    if (event.target.classList.contains('add-new-task')) {
+      const content = prompt('Please type the content for this new task:') // eslint-disable-line no-undef
+      if (content) this.model.createTask(content)
+    }
   })
-  actionsMenuButton.appendChild(actionsMenu)
+  headerDiv.appendChild(actionsMenu)
 
   // TODO: Add input for edition of group title
   // TODO: create new group button
@@ -126,9 +120,9 @@ TaskGroupView.prototype.create = function (container) {
  * @param {number} id - The task identifier
  * @param {string} content - The content of the task
  * @param {boolean} status - True to set as completed
- * @param {boolean} justCreated - flag to give focus on the content input after task creation
+ * @param {number} insertPosition - position in the tasks array at which to insert the newly created task
  */
-TaskGroupView.prototype.createTask = function (id, content, status, justCreated = false) {
+TaskGroupView.prototype.createTask = function (id, content, status, insertPosition = -1) {
   let task = document.createElement('li')
   task.className = 'task'
   task.id = `task-${id}`
@@ -150,7 +144,7 @@ TaskGroupView.prototype.createTask = function (id, content, status, justCreated 
   statusCheckbox.dataset.checked = status
   // TODO: use 'done_all' to check/uncheck all tasks at once
   statusCheckbox.innerHTML = '<i class="material-icons">done</i>'
-  if (!status) statusCheckbox.classList.add('hide')
+  if (!status) statusCheckbox.classList.add('hideCheckbox')
   /* ou
    `<i class='material-icons'>
       ${status ? 'check_box' : 'check_box_outline_blank'}
@@ -243,10 +237,9 @@ TaskGroupView.prototype.createTask = function (id, content, status, justCreated 
   })
   actionsBox.appendChild(removeButton)
 
-  if (justCreated) {
-    this.taskContainer.insertBefore(task, this.taskContainer.firstChild)
-    // Give focus to the content input for the user-created task
-    task.getElementsByClassName('edit')[0].click()
+  if (insertPosition !== -1) {
+    const element = this.taskContainer.children[insertPosition]
+    this.taskContainer.insertBefore(task, element)
   } // eslint-disable-line brace-style
   else this.taskContainer.appendChild(task)
 }
@@ -266,10 +259,10 @@ TaskGroupView.prototype.updateTask = function (id, content, finished_at) {
   const status = (finished_at !== null)
   statusCheckbox.dataset.checked = status
   if (status) {
-    statusCheckbox.classList.remove('hide')
+    statusCheckbox.classList.remove('hideCheckbox')
     contentInput.classList.add('strike')
   } else {
-    statusCheckbox.classList.add('hide')
+    statusCheckbox.classList.add('hideCheckbox')
     contentInput.classList.remove('strike')
   }
   contentInput.value = content

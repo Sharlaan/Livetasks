@@ -4,7 +4,7 @@
   "description": "global installer for the Livetasks project",
   "author": "Sharlaan <raphael.morineau@gmail.com>",
   "license": "MIT",
-  "homepage": "https://github.com/Sharlaan/Livetasks#readme",
+  "homepage": "https://github.com/Sharlaan/Livetasks",
   "repository": {
     "type": "git",
     "url": "https://github.com/Sharlaan/Livetasks.git"

@@ -62,20 +62,20 @@ TaskGroupView.prototype.create = function (container) {
   actionsMenuButton.innerHTML = '<i class="material-icons">more_vert</i>';
   actionsMenuButton.className = 'actionsMenuButton';
   actionsMenuButton.addEventListener('click', function () {
-    var menu = this.children[1];
+    var menu = this.parentElement.children[3];
     menu.style.visibility = 'visible'; // make this as class 'showMenu' ?
     menu.style.opacity = 1;
   });
   actionsMenuButton.addEventListener('keyup', function (event) {
-    var menu = this.children[1];
+    var menu = this.parentElement.children[3];
     if (event.key === 'Escape') {
       menu.style.visibility = 'hidden'; // make this as class 'closeMenu' ?
       menu.style.opacity = 0;
     }
   });
   actionsMenuButton.addEventListener('blur', function (event) {
-    var menu = this.children[1];
-    if (!this.contains(event.relatedTarget)) {
+    var menu = this.parentElement.children[3];
+    if (!menu.contains(event.relatedTarget)) {
       menu.style.visibility = 'hidden'; // make this as class 'closeMenu' ?
       menu.style.opacity = 0;
     }
@@ -83,16 +83,20 @@ TaskGroupView.prototype.create = function (container) {
   headerDiv.appendChild(actionsMenuButton);
 
   var actionsMenu = document.createElement('div');
-  actionsMenu.innerHTML = '\n    <button class=\'create-group\'>\n      <i class=\'material-icons\'>playlist_add</i>\n      Create new group of tasks<br/>(un-implemented)\n    </button></li>\n    <button class=\'edit-group-title\'>\n      <i class=\'material-icons\'>input</i>\n      Edit this group\'s title<br/>(un-implemented)\n    </button>\n    <button class=\'add-new-task\'>\n      <i class=\'material-icons\'>add</i>\n      Add new task\n    </button>';
+  actionsMenu.innerHTML = '\n    <button class=\'create-group\'>\n      <i class=\'material-icons\'>playlist_add</i>\n      Create new group of tasks<br/>(un-implemented)\n    </button>\n    <button class=\'edit-group-title\'>\n      <i class=\'material-icons\'>input</i>\n      Edit this group\'s title<br/>(un-implemented)\n    </button>\n    <button class=\'add-new-task\'>\n      <i class=\'material-icons\'>add</i>\n      Add new task\n    </button>';
   actionsMenu.className = 'actionsMenu';
+  // visibility+opacity hack necessary because 'transition' does not work with 'display'
   actionsMenu.addEventListener('click', function (event) {
     event.stopPropagation();
     event.currentTarget.style.visibility = 'hidden'; // make this as class 'closeMenu' ?
     event.currentTarget.style.opacity = 0;
 
-    if (event.target.classList.contains('add-new-task')) _this.model.createTask('');
+    if (event.target.classList.contains('add-new-task')) {
+      var content = prompt('Please type the content for this new task:'); // eslint-disable-line no-undef
+      if (content) _this.model.createTask(content);
+    }
   });
-  actionsMenuButton.appendChild(actionsMenu);
+  headerDiv.appendChild(actionsMenu);
 
   // TODO: Add input for edition of group title
   // TODO: create new group button
@@ -116,12 +120,12 @@ TaskGroupView.prototype.create = function (container) {
  * @param {number} id - The task identifier
  * @param {string} content - The content of the task
  * @param {boolean} status - True to set as completed
- * @param {boolean} justCreated - flag to give focus on the content input after task creation
+ * @param {number} insertPosition - position in the tasks array at which to insert the newly created task
  */
 TaskGroupView.prototype.createTask = function (id, content, status) {
   var _this2 = this;
 
-  var justCreated = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : false;
+  var insertPosition = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : -1;
 
   var task = document.createElement('li');
   task.className = 'task';
@@ -154,7 +158,7 @@ TaskGroupView.prototype.createTask = function (id, content, status) {
   task.appendChild(statusCheckbox);
 
   var contentInput = document.createElement('input');
-  contentInput.type = 'text';
+  contentInput.maxLength = 250;
   contentInput.dataset.currentContent = content;
   contentInput.dataset.cancel = false;
   contentInput.value = content;
@@ -167,10 +171,13 @@ TaskGroupView.prototype.createTask = function (id, content, status) {
     var isEditing = !this.readOnly;
     if (isEditing) event.stopPropagation();
   });
-  // Save previous value before editing
+  // Save previous value before user actually edit the value
   contentInput.addEventListener('focus', function () {
     var isEditing = !this.readOnly;
-    if (isEditing) this.dataset.currentContent = this.value;
+    if (isEditing) {
+      this.dataset.currentContent = this.value;
+      this.classList.remove('strike');
+    }
   });
   contentInput.addEventListener('blur', function (_ref2) {
     var ct = _ref2.currentTarget;
@@ -182,8 +189,9 @@ TaskGroupView.prototype.createTask = function (id, content, status) {
     var id = task.dataset.id;
     var newContent = ct.value;
     var checked = JSON.parse(checkbox.dataset.checked); // /!\ data-* value is always a string
+    if (checked) ct.classList.add('strike');
     // Prevent useless server call and overwrite value with old value
-    if (ct.dataset.cancel) {
+    if (JSON.parse(ct.dataset.cancel)) {
       ct.value = currentContent;
       ct.dataset.cancel = false;
       return;
@@ -196,11 +204,12 @@ TaskGroupView.prototype.createTask = function (id, content, status) {
   });
   contentInput.addEventListener('keyup', function (event) {
     switch (event.key) {
+      case 'Esc': // 'Escape' not recognised in Edge
       case 'Escape':
         this.dataset.cancel = true;
       // eslint-disable-next-line no-fallthrough
       case 'Enter':
-        this.blur(); // Triggers event defined above
+        this.blur(); // Triggers indirectly the contentInput blur event defined above
         break;
       default:
         break;
@@ -220,7 +229,7 @@ TaskGroupView.prototype.createTask = function (id, content, status) {
     event.stopPropagation(); // necessary to prevent triggering task.click() by bubbling
     var task = event.currentTarget.parentElement.parentElement;
     var contentInput = task.children[1];
-    contentInput.readOnly = false;
+    contentInput.removeAttribute('readonly');
     contentInput.focus();
   });
   actionsBox.appendChild(editButton);
@@ -237,9 +246,11 @@ TaskGroupView.prototype.createTask = function (id, content, status) {
   });
   actionsBox.appendChild(removeButton);
 
-  this.taskContainer.insertBefore(task, this.taskContainer.firstChild);
-  // Give focus to the content input for the user-created task
-  if (justCreated) task.getElementsByClassName('edit')[0].click();
+  if (insertPosition !== -1) {
+    var element = this.taskContainer.children[insertPosition];
+    this.taskContainer.insertBefore(task, element);
+  } // eslint-disable-line brace-style
+  else this.taskContainer.appendChild(task);
 };
 
 /**
@@ -249,6 +260,7 @@ TaskGroupView.prototype.createTask = function (id, content, status) {
  * @param {string} finished_at - Completion date
  */
 TaskGroupView.prototype.updateTask = function (id, content, finished_at) {
+  // TODO: onJustCreated, remove 1st temp task to insert it at correct position (without sorting the whole tasklist)
   var task = document.getElementById('task-' + id);
   if (!task) return;
   var statusCheckbox = task.firstChild;
