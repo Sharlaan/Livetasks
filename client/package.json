@@ -1,6 +1,6 @@
 {
   "name": "livetask-webapp",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "Static server to serve the client-side interface",
   "keywords": [
     "TODO",

@@ -23,6 +23,7 @@ This project is organised with microservices in mind, into 3 sub-projects:
 \* for now, datatable structure is integrated inside the api project.  
 TODO: extract db-related commands, settings and queries into its own repository.
 
+This project has been developped on Windows10 with Webstorm2017, and tested with Chrome58, Firefox53 and Edge15.
 Minimum compatiblity includes IE10 and above.
 
 Interesting arguments against Websockets: [Why not a Websockets only website ?](http://stackoverflow.com/questions/4852702/do-html-websockets-maintain-an-open-connection-for-each-client-does-this-scale)
@@ -138,11 +139,10 @@ this will run both servers with nodemon in automatic watch mode.
 
 
 #### Known issues
-###### Features
+###### Not working features
 - socket is not broadcasting to a given 'group' but still to all groups.
 
 ###### CSS compatibity issues
-- `tchat-footer` and tchat's`message-field` not auto-growing/shrinking with text content, especially on Edge and Firefox.
 - `group-container` presents some mysterious virtual padding-bottom preventing `tasks-container` and `tchat-container`.  
 Note: if change `tasks-container`'s rule `max-height: calc(100% - 70px);` to `max-height: 100%;` (or remove it), tchat messages and tasks will overflow past the app's footer in Firefox and Edge.
 - scrollbar not stylable in non-webkit browsers (Firefox, Edge)

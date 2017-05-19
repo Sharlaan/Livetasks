@@ -63,16 +63,11 @@ TchatView.prototype.create = function (container) {
     if (key === 'Esc' || key === 'Escape') return currentTarget.blur()
     if (key === 'Enter') {
       let newContent = currentTarget.innerText // preserves linebreaks unlike textContent
-      if (shiftKey) {
-        // +20px/newLine + 1px interline
-        // currentTarget.parentElement.style.minHeight = (currentTarget.scrollHeight + 21) + 'px'
-        return
-      }
+      if (shiftKey) return
       if (newContent !== '' && newContent !== placeholder) {
         const trimmedContent = newContent.split('\n').filter(v => v.length).join('\n')
         this.model.sendMessage(trimmedContent)
-        currentTarget.textContent = placeholder
-        // currentTarget.parentElement.style.minHeight = '42px'
+        currentTarget.textContent = ''
       }
     }
   })
