@@ -1,0 +1,42 @@
+.groups-container {
+  display: flex;
+  width: 100%;
+}
+
+.groups-container .group-container {
+  flex: 1;
+  padding: 30px 20px;
+  display: flex;
+  justify-content: space-around;
+}
+
+.groups-container .groups-menu {
+  width: 200px;
+  background-color: white;
+}
+
+.groups-container .groups-menu .groups-menu-header {
+  padding: 25px;
+}
+
+.groups-container .groups-menu .groups-menu-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.groups-container .groups-menu .groups-menu-list li {
+  cursor: pointer;
+  border-right: 4px solid transparent;
+  padding: 7px 20px 7px 25px;
+  transition: var(--hover-transition);
+}
+
+.groups-container .groups-menu .groups-menu-list li.active {
+  border-right: 4px solid cornflowerblue;
+}
+
+.groups-container .groups-menu .groups-menu-list li:hover {
+  color: white;
+  background-color: cornflowerblue;
+}

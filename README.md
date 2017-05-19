@@ -23,6 +23,8 @@ This project is organised with microservices in mind, into 3 sub-projects:
 \* for now, datatable structure is integrated inside the api project.  
 TODO: extract db-related commands, settings and queries into its own repository.
 
+Minimum compatiblity includes IE10 and above.
+
 Interesting arguments against Websockets: [Why not a Websockets only website ?](http://stackoverflow.com/questions/4852702/do-html-websockets-maintain-an-open-connection-for-each-client-does-this-scale)
 
 #### Installation
@@ -49,8 +51,9 @@ cd livetasks
 
 
 4. Install API server  
-Open a new CLI in /server folder  
+Open a new CLI __in /server folder__  
 Firstly, you may want to configure names, ports and password @ `server/src/config/settings.js`  
+/!\ If you change the API main port (`3210`), make sure to reflect your new port in client @ `client/src/public/js/App.js: 'this.API_PORT'`  
 then run:
 ```sh
 yarn
@@ -96,9 +99,7 @@ You should end up with 3 CLIs:
 
 #### Usage
 Basic CRUD operations :
-- Add a new task: 2 options  
-either click on menu in upper-right corner of the task list,  
-or click on the big + button.
+- Add a new task: click on the big + button in upper-right corner of the task list.  
 - Remove a task: click on the X button (right side of each task).  
 Note: the task won't be permanently deleted, but 'suspended', so an administrator can retrieve/restore it.
 - Update a task status by clicking on it. This will toggle the task's status and increment/decrement the counter.  
@@ -107,6 +108,11 @@ To validate an edited value, you can use 'Enter' or click away from the input; '
 
 Addition/Deletion of a task will be notified with a counter in upper-right corner.
 Hovering this counter will tell current % of completion.
+
+In tchat component, while typing a new message, the following shortcuts are available:
+- Enter to send (same effect a clicking on the Send button)
+- Escape (or click away) to cancel
+- SHIFT + Enter to insert a line break in your message
 
 ###### Server-side testing:
 ```sh
@@ -132,6 +138,11 @@ this will run both servers with nodemon in automatic watch mode.
 
 
 #### Known issues
-Compatibility issues:
-- hovering the taskgroup menu buttons does not change the background in Firefox (does not support rgba+hover?)
-- read-only input in Firefox still display a cursor inside
+###### Features
+- socket is not broadcasting to a given 'group' but still to all groups.
+
+###### CSS compatibity issues
+- `tchat-footer` and tchat's`message-field` not auto-growing/shrinking with text content, especially on Edge and Firefox.
+- `group-container` presents some mysterious virtual padding-bottom preventing `tasks-container` and `tchat-container`.  
+Note: if change `tasks-container`'s rule `max-height: calc(100% - 70px);` to `max-height: 100%;` (or remove it), tchat messages and tasks will overflow past the app's footer in Firefox and Edge.
+- scrollbar not stylable in non-webkit browsers (Firefox, Edge)

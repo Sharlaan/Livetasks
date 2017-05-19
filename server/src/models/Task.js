@@ -22,8 +22,8 @@ export default class Task {
 
   /**
    * Create a new task
-   * @param {number} group_id ID of the group the task belongs to
-   * @param {string} content Task's content
+   * @param {number} group_id - ID of the group the task belongs to
+   * @param {string} content - Task's content
    * @return {Promise} promise (id, group_id, content, created_at)
    */
   static create (group_id, content) {
@@ -32,9 +32,9 @@ export default class Task {
 
   /**
    * Update task with the given identifier
-   * @param {number} id Unique identifier
-   * @param {string} content Name
-   * @param {boolean} status True to set as finished, otherwise false
+   * @param {number} id - Unique identifier
+   * @param {string} content - Name
+   * @param {boolean} status - True to set as finished, otherwise false
    * @return {Promise} promise (id, group_id, content, created_at, finished_at)
    */
   static update (id, content, status) {
@@ -43,7 +43,7 @@ export default class Task {
 
   /**
    * Remove the specified task
-   * @param {number} id Task identifier
+   * @param {number} id - Task identifier
    * @return {Promise} promise
    */
   static remove (id) {

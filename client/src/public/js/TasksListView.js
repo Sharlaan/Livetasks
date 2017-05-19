@@ -2,18 +2,12 @@
 /* eslint-disable camelcase */
 /**
  * Constructor
- * @param {TaskGroup} model - Linked model
+ * @param {TasksList} model - Linked model
  */
-function TaskGroupView (model) {
-  /**
-   * Container
-   * @type {DOMElement}
-   */
-  this.container = null
-
+function TasksListView (model) {
   /**
    * Linked model
-   * @type {TaskGroup}
+   * @type {TasksList}
    */
   this.model = model
 
@@ -28,25 +22,37 @@ function TaskGroupView (model) {
    * @type {DOMElement}
    */
   this.taskContainer = null
+
+  /**
+   * container for task's actions (edit/remove)
+   * @type {DOMElement}
+   */
+  this.taskActions = null
+
+  /**
+   * Task currently hovered/focused
+   * @type {DOMElement}
+   */
+  this.currentTask = null
 }
 
 /**
  * Create a new group of task
+ * @param {string} name - Group's name
  * @param {DOMElement} container - Parent element
- * @return {boolean} True if everything was successful
+ * @return {promise} Resolved Promise if everything was successful
  */
-TaskGroupView.prototype.create = function (container) {
+TasksListView.prototype.create = function (name, container) {
   let mainDiv = document.createElement('div')
-  mainDiv.className = 'task-container'
-  this.container = mainDiv
+  mainDiv.className = 'tasksList-container'
 
-  // Header div
+  // Header
   const headerDiv = document.createElement('header')
-  headerDiv.className = 'task-group-header'
+  headerDiv.className = 'tasksList-header'
 
   let groupTitle = document.createElement('h3')
-  groupTitle.className = 'task-group-title'
-  groupTitle.textContent = 'Project 1' // TODO: link this to group name from DB
+  groupTitle.className = 'tasksList-title'
+  groupTitle.textContent = name
   headerDiv.appendChild(groupTitle)
 
   let completionDiv = document.createElement('div')
@@ -55,64 +61,65 @@ TaskGroupView.prototype.create = function (container) {
   headerDiv.appendChild(completionDiv)
   this.completionContainer = completionDiv
 
-  let actionsMenuButton = document.createElement('button')
-  actionsMenuButton.innerHTML = '<i class="material-icons">more_vert</i>'
-  actionsMenuButton.className = 'actionsMenuButton'
-  actionsMenuButton.addEventListener('click', function () {
-    const menu = this.parentElement.children[3]
-    menu.classList.toggle('showMenu')
+  let newTaskButton = document.createElement('button')
+  newTaskButton.innerHTML = '<i class="material-icons">add</i>'
+  newTaskButton.className = 'newTaskButton'
+  newTaskButton.title = 'Add new task'
+  newTaskButton.addEventListener('click', () => {
+    const newContent = prompt('Please type the content for this new task:') // eslint-disable-line no-undef
+    if (newContent) this.model.createTask(newContent)
   })
-  actionsMenuButton.addEventListener('keyup', function (event) {
-    const menu = this.parentElement.children[3]
-    if (event.key === 'Escape') menu.classList.toggle('showMenu')
-  })
-  actionsMenuButton.addEventListener('blur', function (event) {
-    const menu = this.parentElement.children[3]
-    if (!menu.contains(event.relatedTarget)) menu.classList.toggle('showMenu')
-  })
-  headerDiv.appendChild(actionsMenuButton)
-
-  let actionsMenu = document.createElement('div')
-  actionsMenu.innerHTML = `
-    <button class='create-group'>
-      <i class='material-icons'>playlist_add</i>
-      Create new group of tasks<br/>(un-implemented)
-    </button>
-    <button class='edit-group-title'>
-      <i class='material-icons'>input</i>
-      Edit this group's title<br/>(un-implemented)
-    </button>
-    <button class='add-new-task'>
-      <i class='material-icons'>add</i>
-      Add new task
-    </button>`
-  actionsMenu.className = 'actionsMenu'
-  // visibility+opacity hack necessary because 'transition' does not work with 'display'
-  actionsMenu.addEventListener('click', event => {
-    event.currentTarget.classList.toggle('showMenu')
-
-    if (event.target.classList.contains('add-new-task')) {
-      const content = prompt('Please type the content for this new task:') // eslint-disable-line no-undef
-      if (content) this.model.createTask(content)
-    }
-  })
-  headerDiv.appendChild(actionsMenu)
-
-  // TODO: Add input for edition of group title
-  // TODO: create new group button
+  headerDiv.appendChild(newTaskButton)
 
   mainDiv.appendChild(headerDiv)
 
   // Task list
   const taskList = document.createElement('ul')
   taskList.className = 'task-list'
+  taskList.addEventListener('mouseleave', () => {
+    this.taskActions.style.display = 'none'
+    this.currentTask = null
+  })
   mainDiv.appendChild(taskList)
   this.taskContainer = taskList
+
+  // Edit/Remove buttons
+  let actionsBox = document.createElement('div')
+  actionsBox.className = 'actionsBox'
+  actionsBox.addEventListener('mouseenter', () => {
+    this.currentTask.classList.add('active')
+  })
+  actionsBox.addEventListener('mouseleave', () => {
+    this.currentTask.classList.remove('active')
+  })
+  taskList.appendChild(actionsBox)
+  this.taskActions = actionsBox
+
+  let editButton = document.createElement('button')
+  editButton.className = 'edit'
+  editButton.innerHTML = '<i class="material-icons">mode_edit</i>' // or 'input'
+  editButton.title = 'Edit'
+  editButton.addEventListener('click', () => {
+    const contentInput = this.currentTask.children[1]
+    contentInput.removeAttribute('readonly')
+    contentInput.focus()
+  })
+  actionsBox.appendChild(editButton)
+
+  let removeButton = document.createElement('button')
+  removeButton.className = 'remove'
+  removeButton.innerHTML = '<i class="material-icons">clear</i>'
+  removeButton.title = 'Delete'
+  removeButton.addEventListener('click', () => {
+    const confirmation = confirm('Are you sure to delete this task ?') // eslint-disable-line no-undef
+    if (confirmation) this.model.removeTask(this.currentTask.dataset.id)
+  })
+  actionsBox.appendChild(removeButton)
 
   // Finally add to the DOM
   container.appendChild(mainDiv)
 
-  return true
+  return Promise.resolve(true)
 }
 
 /**
@@ -122,12 +129,11 @@ TaskGroupView.prototype.create = function (container) {
  * @param {boolean} status - True to set as completed
  * @param {number} insertPosition - position in the tasks array at which to insert the newly created task
  */
-TaskGroupView.prototype.createTask = function (id, content, status, insertPosition = -1) {
+TasksListView.prototype.createTask = function (id, content, status, insertPosition = -1) {
   let task = document.createElement('li')
   task.className = 'task'
   task.id = `task-${id}`
   task.dataset.id = id
-  // TODO: see if the handler can be generic'ed
   task.addEventListener('click', ({currentTarget: ct}) => {
     // use e.currentTarget to be sure to use the attached node instead of e.target which can be some child
     // use e.currentTarget when in lexical mode (arrow function), or this in normal function(event) mode
@@ -135,7 +141,7 @@ TaskGroupView.prototype.createTask = function (id, content, status, insertPositi
     const id = ct.dataset.id
     const content = ct.children[1].value
     const newChecked = !JSON.parse(checkbox.dataset.checked) // /!\ data-* value is always a string
-    // console.log('Event triggered @ TaskGroupView createTask: newChecked', checkbox)
+    // console.log('Event triggered @ TaskListView createTask: newChecked', checkbox)
     this.model.updateTask(id, content, newChecked)
   })
 
@@ -190,7 +196,7 @@ TaskGroupView.prototype.createTask = function (id, content, status, insertPositi
     }
     // Prevent useless server call
     if (newContent !== currentContent) {
-      // console.log('Event triggered @ TaskGroupView createTask: newContent', newContent)
+      // console.log('Event triggered @ TaskListView createTask: newContent', newContent)
       this.model.updateTask(id, newContent, checked)
     }
   })
@@ -208,34 +214,12 @@ TaskGroupView.prototype.createTask = function (id, content, status, insertPositi
   })
   task.appendChild(contentInput)
 
-  let actionsBox = document.createElement('div')
-  actionsBox.className = 'actionsBox'
-  task.appendChild(actionsBox)
-
-  let editButton = document.createElement('button')
-  editButton.className = 'edit'
-  editButton.innerHTML = '<i class="material-icons">mode_edit</i>' // or 'input'
-  editButton.title = 'Edit'
-  editButton.addEventListener('click', event => {
-    event.stopPropagation() // necessary to prevent triggering task.click() by bubbling
-    const task = event.currentTarget.parentElement.parentElement
-    const contentInput = task.children[1]
-    contentInput.removeAttribute('readonly')
-    contentInput.focus()
+  task.addEventListener('mouseenter', event => {
+    this.taskActions.style.display = 'flex'
+    // single line task height = 38px - actionsBox height 26px = 12px /2 = 6px margin-top
+    this.taskActions.style.top = (event.currentTarget.offsetTop + 6) + 'px'
+    this.currentTask = event.currentTarget
   })
-  actionsBox.appendChild(editButton)
-
-  let removeButton = document.createElement('button')
-  removeButton.className = 'remove'
-  removeButton.innerHTML = '<i class="material-icons">clear</i>'
-  removeButton.title = 'Delete'
-  removeButton.addEventListener('click', event => {
-    event.stopPropagation()
-    const confirmation = confirm('Are you sure to delete this task ?') // eslint-disable-line no-undef
-    const task = event.currentTarget.parentElement.parentElement
-    if (confirmation) this.model.removeTask(task.dataset.id)
-  })
-  actionsBox.appendChild(removeButton)
 
   if (insertPosition !== -1) {
     const element = this.taskContainer.children[insertPosition]
@@ -250,8 +234,7 @@ TaskGroupView.prototype.createTask = function (id, content, status, insertPositi
  * @param {string} content - Task content
  * @param {string} finished_at - Completion date
  */
-TaskGroupView.prototype.updateTask = function (id, content, finished_at) {
-  // TODO: onJustCreated, remove 1st temp task to insert it at correct position (without sorting the whole tasklist)
+TasksListView.prototype.updateTask = function (id, content, finished_at) {
   let task = document.getElementById(`task-${id}`)
   if (!task) return
   const statusCheckbox = task.firstChild
@@ -272,7 +255,7 @@ TaskGroupView.prototype.updateTask = function (id, content, finished_at) {
  * Remove a task
  * @param {number} id - The task identifier
  */
-TaskGroupView.prototype.removeTask = function (id) {
+TasksListView.prototype.removeTask = function (id) {
   const task = document.getElementById(`task-${id}`)
   if (!task) return
 
@@ -284,7 +267,7 @@ TaskGroupView.prototype.removeTask = function (id) {
  * @param {number} taskRemainingCount - Amount of uncompleted task(s)
  * @param {number} taskCount - Task count
  */
-TaskGroupView.prototype.updateCompletion = function (taskRemainingCount, taskCount) {
+TasksListView.prototype.updateCompletion = function (taskRemainingCount, taskCount) {
   this.completionContainer.innerHTML = `${taskRemainingCount} / ${taskCount}`
   if (Number.isFinite(taskCount)) this.completionContainer.title = // eslint-disable-line curly
     `Remaining tasks

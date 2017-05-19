@@ -18,7 +18,7 @@ const {
 
 export default {
   /**
-   * Retrieve getAll tasks
+   * Retrieve all tasks
    * @param {null} data - received from client
    * @param {function} response - callback function used by client
    * which will receive the server data
@@ -59,14 +59,14 @@ export default {
       })
     }
     try {
-      const createdTask = await Task.create(groupId, content)
-      if (createdTask) {
-        // Notify other clients by calling PushNotifier
-        this.broadcast.emit('onTaskCreated', createdTask)
+      const newTask = await Task.create(groupId, content)
+      if (newTask) {
+        // Notify other clients
+        this.broadcast.emit('onTaskCreated', newTask)
         // respond to client
         response({
           status: 'success',
-          data: createdTask,
+          data: newTask,
           message: TASK_CREATE_SUCCESS
         })
       }
@@ -102,7 +102,7 @@ export default {
     }
     try {
       const updatedTask = await Task.update(+id, content, finished)
-      // Notify other clients by calling PushNotifier
+      // Notify other clients
       this.broadcast.emit('onTaskUpdated', updatedTask)
       // respond to client
       response({
@@ -137,7 +137,7 @@ export default {
     }
     try {
       await Task.remove(id)
-      // Notify other clients by calling PushNotifier
+      // Notify other clients
       this.broadcast.emit('onTaskRemoved', { groupId, id })
       // respond to client
       response({

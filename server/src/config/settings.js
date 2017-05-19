@@ -2,10 +2,6 @@ export const common = {
   port: Number(process.env.PORT) || 3210
 }
 
-export const socket = {
-  port: 8000
-}
-
 export const database = {
   host: 'localhost',
   database: 'livetasks',

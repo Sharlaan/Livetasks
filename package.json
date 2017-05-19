@@ -1,6 +1,6 @@
 {
-  "name": "livetask-raphael-morineau",
-  "version": "1.0.0",
+  "name": "livetasks",
+  "version": "2.0.0",
   "description": "global installer for the Livetasks project",
   "author": "Sharlaan <raphael.morineau@gmail.com>",
   "license": "MIT",
@@ -14,10 +14,10 @@
   },
   "main": "index.js",
   "scripts": {
-    "removedb": "psql -U postgres -d livetasks -c \"SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = 'livetasks'\" -d postgres -c \"DROP DATABASE livetasks\"",
-    "createdb": "createdb -U postgres livetasks",
-    "populatedb": "psql -U postgres livetasks < ./server/src/config/database/schemes/schemeTasks.sql",
-    "pinstall": "run-p install:*",
+    "tremovedb": "psql -U postgres -d livetasks -c \"SELECT pg_terminate_backend(pg_stat_activity.pid) FROM pg_stat_activity WHERE pg_stat_activity.datname = 'livetasks'\" -d postgres -c \"DROP DATABASE livetasks\"",
+    "tcreatedb": "createdb -U postgres livetasks",
+    "tpopulatedb": "psql -U postgres livetasks < ./server/src/config/database/schemes/schemeTasks.sql",
+    "tinstall": "run-p install:*",
     "install:database": "run-s createdb populatedb",
     "install:api": "start  cd server  &&  npm i  &&  npm start",
     "install:webapp": "start  cd client  &&  npm i  &&  npm start",

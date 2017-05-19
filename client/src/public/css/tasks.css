@@ -1,26 +1,15 @@
-input {
-  font-family: 'Raleway', sans-serif;
-}
-
-button {
-  background-color: #eaedf2;
-  height: 36px;
-  width: 36px;
-  display: flex;
-}
-
-.task-container {
+.tasksList-container {
   display: flex;
   flex-direction: column;
   width: 350px;
-  margin: 0 auto;
+  margin: 0 20px;
   background-color: white;
   padding: 20px;
   box-shadow: var(--shadow-elevation-2dp);
-  /* box-shadow: rgb(150, 150, 150) 0 4px 9px; */
+  max-height: calc(100% - 70px);
 }
 
-.task-container .task-group-header {
+.tasksList-container .tasksList-header {
   padding-bottom: 15px;
   display: flex;
   position: relative;
@@ -28,70 +17,50 @@ button {
   align-items: center;
 }
 
-.task-container .task-group-header .task-group-title {
+.tasksList-container .tasksList-header .tasksList-title {
   flex: 1;
 }
 
-.task-container .task-group-header .completionDiv {
+.tasksList-container .tasksList-header .completionDiv {
   cursor: default;
 }
 
-.task-container .task-group-header .actionsMenuButton {
+.tasksList-container .tasksList-header .newTaskButton {
   margin-left: 10px;
-  border: none;
   border-radius: 50%;
   color: rgba(0, 0, 0, 0.5);
   background-color: rgba(234, 237, 242, 0); /* #eaedf2 */
   transition: var(--hover-transition);
 }
 
-.task-container .task-group-header .actionsMenuButton:hover {
-  cursor: pointer;
-  color: rgba(0, 0, 0, 1);
-  background-color: rgba(234, 237, 242, 1);
+.tasksList-container .tasksList-header .newTaskButton:hover {
+  color: white;
+  background-color: cornflowerblue;
 }
 
-.task-container .task-group-header .actionsMenu {
-  z-index: 1;
-  position: absolute;
-  top: 0;
-  right: 0;
-  box-shadow: var(--shadow-elevation-4dp);
-  opacity: 0;
-  visibility: hidden;
-  transition: visibility 250ms, opacity 250ms linear; /* transitions does not work on display property */
-}
-
-.task-container .task-group-header .actionsMenu button {
-  align-items: center;
-  white-space: nowrap;
-  padding: 10px;
-  height: auto;
-  width: 100%;
-  border: none;
-  border-left: 4px solid white;
-  background-color: white;
-  transition: var(--hover-transition);
-}
-
-.task-container .task-group-header .actionsMenu button:hover {
-  cursor: pointer;
-  border-left: 4px solid CornFlowerBlue;
-  background-color: #eaedf2;
-}
-
-.task-container .task-group-header .actionsMenu button i {
-  margin-right: 10px;
-}
-
-.task-container .task-list {
-  margin: 0;
-  padding: 0;
+.tasksList-container .task-list {
+  position: relative;
   list-style-type: none;
   transition: var(--hover-transition);
+  overflow-y: auto;
+  overflow-x: hidden;
 }
 
-.task-container .task-list .task {
+.tasksList-container .task-list::-webkit-scrollbar {
+  width: 8px;
+}
+
+.tasksList-container .task-list::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background: linear-gradient(180deg, cornflowerblue, white);
+}
+
+.tasksList-container .task-list::-webkit-scrollbar-track {
+  border-radius: 8px;
+  box-shadow: inset 0 0 6px rgba(0,0,0,0.1);
+}
+
+.tasksList-container .task-list .task {
   display: flex;
   align-items: center;
   border: none;
@@ -102,63 +71,72 @@ button {
   opacity: 0.5;
 }
 
-.task-container .task-list .task:hover,
-.task-container .task-list .task:focus {
+.tasksList-container .task-list .task:hover,
+.tasksList-container .task-list .task.active {
   cursor: pointer;
-  opacity: 1;
-  background-color: rgba(234, 237, 242, 0.25);
-  border-bottom-color: CornFlowerBlue;
-  border-top-color: CornFlowerBlue;
+  background-color: #E1F5FE;
+  opacity: 1 !important;
+  border-bottom-color: CornFlowerBlue !important;
+  border-top-color: CornFlowerBlue !important;
 }
 
-.task-container .task-list .task .statusCheckbox {
+.tasksList-container .task-list .task .statusCheckbox {
   display: flex;
+  color: limegreen;
 }
 
-.task-container .task-list .task .taskContent {
+.tasksList-container .task-list .task .taskContent {
   flex: 1;
   margin: 0 15px;
-  padding: 5px;
   border: none;
 }
 
-.task-container .task-list .task .taskContent[readonly] {
+.tasksList-container .task-list .task .taskContent[readonly] {
   cursor: pointer;
   background-color: transparent;
 }
 
-.task-container .task-list .task .taskContent:not([readonly]):focus {
+.tasksList-container .task-list .task .taskContent:not([readonly]):focus {
   cursor: default;
   background-color: white;
-  border: 1px solid blue;
+  border: 1px solid cornflowerblue;
   border-radius: 5px;
 }
-.task-container .task-list .task .actionsBox {
-  display: flex;
+
+.tasksList-container .task-list .actionsBox {
+  display: none;
+  position: absolute;
+  background-color: transparent;
+  right: 0;
+  z-index: 1;
 }
 
-.task-container .task-list .task .actionsBox button {
-  border: none;
+.tasksList-container .task-list .actionsBox button {
   margin: 0 5px;
   border-radius: 50%;
-  cursor: pointer;
   transition: var(--hover-transition);
   opacity: 0;
+  height: 26px;
+  width: 26px;
 }
 
-.task-container .task-list .task:hover .actionsBox button {
+.tasksList-container .task-list .actionsBox button i {
+  font-size: 20px;
+}
+
+.tasksList-container .task-list .actionsBox button {
   opacity: 1;
 }
 
-.task-container .task-list .task:hover .actionsBox button:hover {
+.tasksList-container .task-list .actionsBox button:hover {
   color: white;
 }
 
-.task-container .task-list .task:hover .actionsBox button.edit:hover {
+.tasksList-container .task-list .actionsBox button.edit:hover {
   background-color: cornflowerblue;
 }
 
-.task-container .task-list .task:hover .actionsBox button.remove:hover {
+.tasksList-container .task-list .actionsBox button.remove:hover {
   background-color: orangered;
 }
 
@@ -168,9 +146,4 @@ button {
 
 .hideCheckbox {
   visibility: hidden;
-}
-
-.showMenu {
-  visibility: visible !important;
-  opacity: 1 !important;
 }

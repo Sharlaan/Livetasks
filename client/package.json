@@ -1,6 +1,6 @@
 {
   "name": "livetask-webapp",
-  "version": "1.0.0",
+  "version": "2.0.0",
   "description": "Static server to serve the client-side interface",
   "keywords": [
     "TODO",
@@ -22,8 +22,7 @@
     "lint": "eslint src"
   },
   "dependencies": {
-    "express": "^4.15.2",
-    "moment": "^2.18.1"
+    "express": "^4.15.3"
   },
   "devDependencies": {
     "babel-cli": "^6.24.1",

@@ -1,6 +1,4 @@
 html {
-  padding: 0;
-  margin: 0;
   height: 100%;
   background-color: #eaedf2;
   font-family: 'Raleway', sans-serif;
@@ -40,7 +38,12 @@ html {
   0  8px 10px -5px rgba(0, 0, 0, 0.4);
 }
 
-/* Remove dirty blue outlines on Chrome ('CSS reset') */
+/* CSS reset */
+* {
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
 *:focus {
   outline: 0;
 }
@@ -48,27 +51,63 @@ html {
 body {
   display: flex;
   flex-direction: column;
-  min-height: 100%;
-  margin: 0;
+  height: 100%;
+}
+
+input, textarea {
+  font-family: 'Raleway', sans-serif;
+  padding: 5px;
+}
+
+button {
+  cursor: pointer;
+  background-color: #eaedf2;
+  height: 36px;
+  width: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
 }
 
 body > header {
-  padding: 25px;
+  z-index: 1;
+  height: 60px;
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
   background-color: cornflowerblue;
   color: white;
   box-shadow: rgb(150, 150, 150) 0 4px 9px;
+  align-items: center;
 }
 
-h1, h2, h3, h4, h5 {
-  margin: 0;
+body > header > span {
+  align-self: flex-end;
 }
 
 #root {
-  padding-top: 30px;
   flex: 1;
+  display: flex;
+  /* Necessary for Firefox (60px = Header height / 54px = Footer height) */
+  max-height: calc(100% - 60px - 54px);
 }
 
 body > footer {
+  color: white;
+  background-color: rgba(0, 0, 0, 0.8);
   padding: 15px;
-  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+body > footer > a {
+  color: cornflowerblue;
+  text-decoration: none;
+}
+
+body > footer > i,
+body > footer > a {
+  margin: 0 5px;
 }
