@@ -12,9 +12,9 @@ function TasksList (groupId, socket) {
    */
   this.groupId = groupId
 
-   /**
-    * @type {Socket}
-    */
+  /**
+   * @type {Socket}
+   */
   this.socket = socket
 
   /**
@@ -37,7 +37,7 @@ function TasksList (groupId, socket) {
  */
 TasksList.prototype.init = function (name, container) {
   this.view.create(name, container)
-           .then(() => this.load())
+           .then(() => this.load()) // eslint-disable-line indent
 
   // Initialize broadcasted event listeners
   this.socket.on('onTaskCreated', data => {

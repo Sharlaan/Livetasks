@@ -9,6 +9,7 @@ import websockets from 'socket.io'
 import { common } from './config/settings'
 import router from './router'
 
+// TODO: turn into WSS with http://stackoverflow.com/a/38525463/3740223 (wait for NodeJSv8+ for http2 implemented in core)
 /**
  * Express server.
  */

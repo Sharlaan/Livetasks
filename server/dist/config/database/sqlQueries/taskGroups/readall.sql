@@ -1,1 +1,0 @@
-SELECT id, name FROM groups WHERE deleted_at IS NULL ORDER BY created_at ASC;

@@ -31,7 +31,7 @@ const {
 
 exports.default = {
   /**
-   * Retrieve getAll tasks
+   * Retrieve all tasks
    * @param {null} data - received from client
    * @param {function} response - callback function used by client
    * which will receive the server data
@@ -77,14 +77,14 @@ exports.default = {
         });
       }
       try {
-        const createdTask = yield _Task2.default.create(groupId, content);
-        if (createdTask) {
-          // Notify other clients by calling PushNotifier
-          _this.broadcast.emit('onTaskCreated', createdTask);
+        const newTask = yield _Task2.default.create(groupId, content);
+        if (newTask) {
+          // Notify other clients
+          _this.broadcast.emit('onTaskCreated', newTask
           // respond to client
-          response({
+          );response({
             status: 'success',
-            data: createdTask,
+            data: newTask,
             message: TASK_CREATE_SUCCESS
           });
         }
@@ -120,11 +120,11 @@ exports.default = {
         });
       }
       try {
-        const updatedTask = yield _Task2.default.update(+id, content, finished);
-        // Notify other clients by calling PushNotifier
-        _this2.broadcast.emit('onTaskUpdated', updatedTask);
+        const updatedTask = yield _Task2.default.update(+id, content, finished
+        // Notify other clients
+        );_this2.broadcast.emit('onTaskUpdated', updatedTask
         // respond to client
-        response({
+        );response({
           status: 'success',
           data: updatedTask,
           message: TASK_UPDATE_SUCCESS
@@ -159,11 +159,11 @@ exports.default = {
         });
       }
       try {
-        yield _Task2.default.remove(id);
-        // Notify other clients by calling PushNotifier
-        _this3.broadcast.emit('onTaskRemoved', { groupId, id });
+        yield _Task2.default.remove(id
+        // Notify other clients
+        );_this3.broadcast.emit('onTaskRemoved', { groupId, id }
         // respond to client
-        response({
+        );response({
           status: 'success',
           message: TASK_REMOVE_SUCCESS
         });

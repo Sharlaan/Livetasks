@@ -23,7 +23,7 @@ const { database: dbname } = _settings.database,
   for (let [tableNames, query] of tables) {
     _database2.default.none(query).then(() => console.log(`Table(s) '${tableNames}' in DB '${dbname}' successfully populated`)).catch(error => console.error(`Error populating tables in DB '${dbname}':`, error.message));
   }
-}).catch(error => console.error(`Creation of datatable '${dbname}' failed:`, error.message));
+}).catch(error => console.error(`Creation of datatable '${dbname}' failed:`, error.message)
 
 // Note: to reset: you can use command 'yarn removedb',
 // but beware as whole datatable will be deleted !
@@ -35,4 +35,5 @@ const { database: dbname } = _settings.database,
  "populatedb": "psql -U postgres livetasks < ./server/src/config/database/schemes/schemeTasks.sql",
  "test": "psql -U postgres -d livetasks -c \"SELECT * from tasks\""
  */
+);
 //# sourceMappingURL=migrate.js.map

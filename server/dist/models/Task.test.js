@@ -47,10 +47,11 @@ _ava2.default.before('Task.getAll should get all registered tasks', (() => {
     try {
       const expected = yield _database2.default.one('select * from tasks where id=1');
       const data = yield _Task2.default.get(1);
-      t.true(data.id === expected.id && data.content === expected.content && data.tag === expected.tag);
+      t.true(data.id === expected.id && data.content === expected.content && data.tag === expected.tag
       /* t.is(data.created_at, expected.created_at)
       t.is(data.finished_at, expected.finished_at)
       t.is(data.deleted_at, expected.deleted_at) */
+      );
     } catch (error) {
       console.error('Error Task.get', error);
     }
@@ -87,8 +88,8 @@ _ava2.default.before('Task.getAll should get all registered tasks', (() => {
       const firstTask = yield _Task2.default.get(1);
       const updatedTask = yield _Task2.default.update(firstTask.id, 'edited content', 9, !firstTask.id.finishde_at).then(function () {
         return _Task2.default.get(firstTask.id);
-      });
-      t.true(updatedTask.content === 'edited content' && updatedTask.tag === 9 && updatedTask.finished_at !== null);
+      } // eslint-disable-line indent
+      );t.true(updatedTask.content === 'edited content' && updatedTask.tag === 9 && updatedTask.finished_at !== null);
     } catch (error) {
       console.error('Error Task.update', error);
     }
@@ -107,8 +108,8 @@ _ava2.default.before('Task.getAll should get all registered tasks', (() => {
       const lastID = allTasks.length;
       const lastTask = yield _Task2.default.remove(lastID).then(function () {
         return _Task2.default.get(lastID);
-      });
-      t.false(lastTask.deleted_at === null);
+      } // eslint-disable-line indent
+      );t.false(lastTask.deleted_at === null);
     } catch (error) {
       console.error('Error Task.remove', error);
     }

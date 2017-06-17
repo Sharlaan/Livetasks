@@ -10,7 +10,7 @@ var _TasksController2 = _interopRequireDefault(_TasksController);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
-_ava2.default.todo('tasksController.all should ...');
+_ava2.default.todo('tasksController.all should ...'
 
 /*
  test('', async t => {
@@ -21,4 +21,5 @@ _ava2.default.todo('tasksController.all should ...');
  }
  })
  */
+);
 //# sourceMappingURL=TasksController.test.js.map

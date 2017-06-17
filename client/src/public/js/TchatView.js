@@ -26,71 +26,81 @@ function TchatView (model) {
  * @return {promise} Resolved Promise if everything was successful
  */
 TchatView.prototype.create = function (container) {
-  let mainDiv = document.createElement('div')
-  mainDiv.className = 'tchat-container'
+  const tchatTitle = createElement('h3', { textContent: 'Tchat' })
 
-  // Header
-  const headerDiv = document.createElement('header')
-  headerDiv.className = 'tchat-header'
-
-  let tchatTitle = document.createElement('h3')
-  tchatTitle.textContent = 'Tchat'
-  headerDiv.appendChild(tchatTitle)
-  mainDiv.appendChild(headerDiv)
+  const headerDiv = createElement('header',
+    { className: 'tchat-header' },
+    tchatTitle
+  )
 
   // Messages
-  const messageList = document.createElement('ul')
-  messageList.className = 'message-list'
-  mainDiv.appendChild(messageList)
+  const messageList = createElement('ul', { className: 'message-list' })
   this.messageContainer = messageList
 
   // Footer Input
-  const footerDiv = document.createElement('footer')
-  footerDiv.className = 'tchat-footer'
-  const messageField = document.createElement('p')
-  messageField.className = 'message-field'
-  messageField.setAttribute('contenteditable', 'true')
   const placeholder = 'Type some message ...'
-  messageField.textContent = placeholder
-  messageField.addEventListener('focus', function () {
-    if (this.textContent === placeholder) this.textContent = ''
-  })
-  messageField.addEventListener('blur', function () {
-    this.textContent = placeholder
-  })
-  // TODO: test on tablet
-  messageField.addEventListener('keyup', ({ key, shiftKey, currentTarget }) => {
-    if (key === 'Esc' || key === 'Escape') return currentTarget.blur()
-    if (key === 'Enter') {
-      let newContent = currentTarget.innerText // preserves linebreaks unlike textContent
-      if (shiftKey) return
-      if (newContent !== '' && newContent !== placeholder) {
-        const trimmedContent = newContent.split('\n').filter(v => v.length).join('\n')
-        this.model.sendMessage(trimmedContent)
-        currentTarget.textContent = ''
-      }
-    }
-  })
-  footerDiv.appendChild(messageField)
-  const sendButton = document.createElement('button')
-  sendButton.className = 'send-button'
-  sendButton.innerHTML = '<i class="material-icons">send</i>'
-  sendButton.title = 'Send message'
-  sendButton.addEventListener('click', event => {
-    const messageField = event.currentTarget.parentElement.parentElement.getElementsByClassName('message-field')[0]
-    const newContent = messageField.innerText
-    if (newContent !== '' && newContent !== placeholder) {
-      const trimmedContent = newContent.split('\n').filter(v => v.length).join('\n')
-      this.model.sendMessage(trimmedContent)
-      messageField.textContent = placeholder
-    }
-  })
-  const buttonsContainer = document.createElement('div')
-  buttonsContainer.className = 'buttons-container'
-  buttonsContainer.appendChild(sendButton)
-  footerDiv.appendChild(buttonsContainer)
+  const messageField = createElement('p',
+    {
+      className: 'message-field',
+      textContent: placeholder,
+      setAttribute: [['contenteditable', 'true']],
+      addEventListener: [
+        ['focus', function () {
+          if (this.textContent === placeholder) this.textContent = ''
+        }],
+        ['blur', function () {
+          if (!this.textContent) this.textContent = placeholder
+        }],
+        ['keyup', ({ key, shiftKey, currentTarget }) => {
+          switch (key) {
+            case 'Esc':
+            case 'Escape':
+              currentTarget.textContent = ''
+              currentTarget.blur()
+              break
 
-  mainDiv.appendChild(footerDiv)
+            case 'Enter':
+              if (shiftKey) break // SHIFT + Enter = linebreak
+              passMessage2Model(currentTarget, placeholder, this.model.sendMessage)
+              currentTarget.textContent = ''
+              break
+
+            default: break
+          }
+        }]
+      ]
+    }
+  )
+  // TODO: test on tablet
+  const sendButton = createElement('button',
+    {
+      className: 'send-button',
+      innerHTML: '<i class="material-icons">send</i>',
+      title: 'Send message',
+      addEventListener: [
+        ['click', event => {
+          const field = event.currentTarget.parentElement.parentElement.getElementsByClassName('message-field')[0]
+          passMessage2Model(field, placeholder, this.model.sendMessage)
+          messageField.textContent = placeholder
+        }]
+      ]
+    }
+  )
+
+  const buttonsContainer = createElement('div',
+    { className: 'buttons-container' },
+    sendButton
+  )
+
+  const footerDiv = createElement('footer',
+    { className: 'tchat-footer' },
+    messageField, buttonsContainer
+  )
+
+  const mainDiv = createElement('div',
+    { className: 'tchat-container' },
+    headerDiv, messageList, footerDiv
+  )
 
   // Finally add to the DOM
   container.appendChild(mainDiv)
@@ -106,30 +116,43 @@ TchatView.prototype.create = function (container) {
  * @param {string} created_at - Message's creation date
  */
 TchatView.prototype.createMessage = function (id, sender, content, created_at) {
-  let message = document.createElement('li')
-  message.className = 'message'
-  if (sender === this.model.pseudo) message.style.flexDirection = 'row-reverse'
-  message.id = `message-${id}`
-  message.dataset.id = id
+  const senderDisplay = createElement('div',
+    {
+      className: 'senderDisplay',
+      textContent: sender
+    }
+  )
 
-  let senderDisplay = document.createElement('div')
-  senderDisplay.className = 'senderDisplay'
-  senderDisplay.textContent = sender
-  message.appendChild(senderDisplay)
+  const postDate = createElement('div',
+    {
+      textContent: moment(created_at, null, 'en').fromNow(), // eslint-disable-line no-undef
+      className: 'postDate'
+    }
+  )
 
-  let messageContent = document.createElement('div')
-  messageContent.dataset.currentContent = content
-  messageContent.innerText = content
-  messageContent.className = sender === this.model.pseudo
-    ? 'messageOwnContent'
-    : 'messageContent'
-  let postDate = document.createElement('div')
-  postDate.textContent = moment(created_at, null, 'en').fromNow() // eslint-disable-line no-undef
-  postDate.className = 'postDate'
-  messageContent.appendChild(postDate)
-  message.appendChild(messageContent)
+  const messageContent = createElement('div',
+    {
+      dataset: { currentContent: content },
+      innerText: content,
+      className: sender === this.model.pseudo
+        ? 'messageOwnContent'
+        : 'messageContent'
+    },
+    postDate
+  )
+
+  const message = createElement('li',
+    {
+      id: `message-${id}`,
+      dataset: { id },
+      className: 'message',
+      classList: { add: sender === this.model.pseudo ? ['reverseFlexDirection'] : null }
+    },
+    senderDisplay, messageContent
+  )
 
   this.messageContainer.appendChild(message)
+  // Scroll to most recent message
   this.messageContainer.scrollTop = this.messageContainer.scrollHeight
 }
 
@@ -139,7 +162,7 @@ TchatView.prototype.createMessage = function (id, sender, content, created_at) {
  * @param {string} content - Message content
  */
 TchatView.prototype.updateMessage = function (id, content) {
-  let message = document.getElementById(`message-${id}`)
+  const message = document.getElementById(`message-${id}`)
   if (!message) return
   const contentInput = message.children[1]
   contentInput.value = content
@@ -154,4 +177,21 @@ TchatView.prototype.removeMessage = function (id) {
   if (!message) return
 
   this.messageContainer.removeChild(message)
+}
+
+/**
+ * Helper function for reusability across keystroke events
+ *
+ * @param {DomElement} field - element in which message is typed
+ * @param {string} placeholder - optional placeholder text to compare
+ *                               to prevent unnecessary server request
+ * @param {function} sendMessage - model's function
+ */
+function passMessage2Model (field, placeholder = '', sendMessage) {
+  const newContent = field.innerText // preserves linebreaks unlike textContent
+  if (newContent !== '' && newContent !== placeholder) {
+    // Remove additional unnecessary linebreaks at the end of new content
+    const trimmedContent = newContent.split('\n').filter(v => v.length).join('\n')
+    sendMessage(trimmedContent)
+  }
 }

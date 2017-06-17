@@ -36,13 +36,16 @@
 }
 
 .tchat-container .message-list .message {
-    position: relative;
     display: flex;
     align-items: center;
     border: none;
     padding: 5px;
     transition: var(--hover-transition);
     opacity: 0.5;
+}
+
+.reverseFlexDirection {
+    flex-direction: row-reverse;
 }
 
 .tchat-container .message-list .message .messageContent {
@@ -115,6 +118,7 @@
     color: lightgrey;
     border: 1px solid lightgrey;
     min-height: 42px;
+    width: 76%;
 }
 
 .tchat-container .tchat-footer .message-field:focus {
@@ -130,6 +134,7 @@
 
 .tchat-container .tchat-footer .buttons-container .send-button {
     border-radius: 50%;
+    transition: var(--hover-transition);
 }
 
 .tchat-container .tchat-footer .buttons-container .send-button:hover {

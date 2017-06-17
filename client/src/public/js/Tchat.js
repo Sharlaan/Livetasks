@@ -12,9 +12,9 @@ function Tchat (groupId, socket) {
    */
   this.groupId = groupId
 
-   /**
-    * @type {Socket}
-    */
+  /**
+   * @type {Socket}
+   */
   this.socket = socket
 
   /**

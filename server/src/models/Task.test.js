@@ -52,7 +52,7 @@ test('Task.update should properly update first task\'s fields content, tag, and 
   try {
     const firstTask = await Task.get(1)
     const updatedTask = await Task.update(firstTask.id, 'edited content', 9, !firstTask.id.finishde_at)
-                                  .then(() => Task.get(firstTask.id))
+                                  .then(() => Task.get(firstTask.id)) // eslint-disable-line indent
     t.true(
       updatedTask.content === 'edited content' &&
       updatedTask.tag === 9 &&
@@ -69,7 +69,7 @@ test('Task.remove should remove the last registered task', async t => {
     const allTasks = await Task.getAll()
     const lastID = allTasks.length
     const lastTask = await Task.remove(lastID)
-                               .then(() => Task.get(lastID))
+                               .then(() => Task.get(lastID)) // eslint-disable-line indent
     t.false(lastTask.deleted_at === null)
   } catch (error) {
     console.error('Error Task.remove', error)

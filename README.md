@@ -34,13 +34,13 @@ Interesting arguments against Websockets: [Why not a Websockets only website ?](
 node -v && psql -V
 ```
 Both commands should yield a finite version number.  
-(resp. v7.10.0 and v9.6.2 in my case)  
+(resp. v8+ and v9.6+ in my case)  
 Note: for your convenience, make sure the symbolic link 'psql' is in your PATH.  
   
 
-2. Install globally yarn and pm2:  
+2. Install globally pm2:  
 ```sh
-npm i -g yarn pm2
+npm i -g pm2
 ```
 
 
@@ -57,38 +57,38 @@ Firstly, you may want to configure names, ports and password @ `server/src/confi
 /!\ If you change the API main port (`3210`), make sure to reflect your new port in client @ `client/src/public/js/App.js: 'this.API_PORT'`  
 then run:
 ```sh
-yarn
+npm i
 ```
 4-bis. If the command above fails, verify dependencies have been correctly installed  
 then, in 'server' CLI, create PostgreSQL database 'livetasks':
 ```sh
-yarn migrate
+npm run migrate
 ```
 you can test if your data have been correctly injected into 'tasks' table:
 ```sh
-yarn testdb
+npm run testdb
 ```
 
 /!\ Important: make sure nothing is using current livetasks DB (especially your IDE),  
 or else Postgres might hang without warning ...  
 to remove database /!\ WARNING: ALL DATA IN livetasks DB WILL BE DELETED:
 ```sh
-yarn removedb
+npm run removedb
 ```
 
 
 5. Install client server  
 Open a new CLI in /client folder, then run:
 ```sh
-yarn
+npm i
 ```
 
 
 6. Enjoy !
 ```sh
-yarn start
+npm start
 or
-yarn openBrowser
+npm run openBrowser
 ```
 
 You should end up with 3 CLIs:
@@ -117,11 +117,11 @@ In tchat component, while typing a new message, the following shortcuts are avai
 
 ###### Server-side testing:
 ```sh
-yarn test
+npm test
 ```
 ... then you can read the coverage report with:
 ```sh
-yarn coverage
+npm run coverage
 ```
 
 
@@ -133,7 +133,7 @@ pm2 stop all
 pm2 delete all
 pm2 kill
 ```
-Next, run `yarn start` on each server and client CLIs:  
+Next, run `npm start` on each server and client CLIs:  
 this will run both servers with nodemon in automatic watch mode.
 // TODO: use Webpack
 

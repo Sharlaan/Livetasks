@@ -40,33 +40,34 @@ var _router2 = _interopRequireDefault(_router);
 
 function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
+// TODO: turn into WSS with http://stackoverflow.com/a/38525463/3740223 (wait for NodeJSv8+ for http2 implemented in core)
 /**
  * Express server.
  */
 const app = (0, _express2.default)();
 const server = app.listen(_settings.common.port, function () {
   console.info(`API server listening on port ${_settings.common.port}`);
-});
+}
 
 // Middlewares
-app.use((0, _helmet2.default)()); // app.disable('x-powered-by')
-app.use((0, _morgan2.default)('dev')); // logs every request to the console
-app.use((0, _compression2.default)()); // gzip compression
-app.use(_bodyParser2.default.json()); // parses bodies with content-type = 'application/json'
-app.use((0, _hpp2.default)()); // anti-HTTP Parameter Pollution
-app.use((0, _cors2.default)()); // Enable Cross-Origin Resource Sharing
+);app.use((0, _helmet2.default)() // app.disable('x-powered-by')
+);app.use((0, _morgan2.default)('dev') // logs every request to the console
+);app.use((0, _compression2.default)() // gzip compression
+);app.use(_bodyParser2.default.json() // parses bodies with content-type = 'application/json'
+);app.use((0, _hpp2.default)() // anti-HTTP Parameter Pollution
+);app.use((0, _cors2.default)() // Enable Cross-Origin Resource Sharing
 
 /**
  * Attach Websockets API to the Express server
  * for push notifications.
  */
-const io = (0, _socket2.default)(server);
-io.on('connect', _router2.default);
+);const io = (0, _socket2.default)(server);
+io.on('connect', _router2.default
 
 /**
  * Event listener for HTTP server "error" event.
  */
-function onError(error) {
+);function onError(error) {
   if (error.syscall !== 'listen') throw error;
   const bind = (typeof port === 'string' ? 'Pipe ' : 'Port ') + _settings.common.port;
 

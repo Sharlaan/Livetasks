@@ -34,7 +34,7 @@ _prompt2.default.get(property, (error, { yesno }) => {
 
 function resetdb(configParams, dbname) {
   (0, _pgtools.dropdb)(configParams, dbname).then(() => console.log(`DB ${dbname} successfully dropped.`)).catch(error => console.error(`Error dropping db ${dbname}!
-      ${error}`));
+      ${error}`)
   /*  dropdb(configParams, `${dbname}_test`)
       .then(() => console.log(`DB ${dbname}_test successfully dropped.`))
       .catch(error => console.error(
@@ -42,6 +42,7 @@ function resetdb(configParams, dbname) {
         ${error}`
       ))
       */
+  );
 }
 
 /*

@@ -10,7 +10,7 @@
     "url": "https://github.com/Sharlaan/Livetasks.git"
   },
   "engines": {
-    "node": "7.x"
+    "node": ">=8"
   },
   "main": "index.js",
   "scripts": {
