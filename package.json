@@ -25,7 +25,7 @@
     "openBrowser": "opn http://localhost:3000"
   },
   "dependencies": {
-    "npm-run-all": "^4.0.2",
+    "npm-run-all": "^4.1.2",
     "opn-cli": "^3.1.0"
   }
 }

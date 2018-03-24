@@ -8,10 +8,12 @@ coverage
 .nyc_output
 
 # production
-/dist
+client/dist
+server/dist
 
 # misc
 .DS_Store
+.vscode
 .idea
 .env
 .log*
