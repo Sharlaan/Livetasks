@@ -16,4 +16,4 @@ server/dist
 .vscode
 .idea
 .env
-.log*
+*.log

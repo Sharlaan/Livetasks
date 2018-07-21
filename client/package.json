@@ -1,5 +1,5 @@
 {
-  "name": "livetask-webapp",
+  "name": "webapp",
   "version": "2.0.1",
   "description": "Static server to serve the client-side interface",
   "keywords": [
@@ -16,7 +16,7 @@
     "node": ">=8"
   },
   "scripts": {
-    "postinstall": "npm run start:prod",
+    "spostinstall": "yarn start:prod",
     "start": "nodemon src/index",
     "start:prod": "cross-env NODE_ENV=production run-s cleandist build runprod",
     "runprod": "pm2 start dist/index.js --name \"livetasks-webapp\"",
@@ -29,15 +29,15 @@
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
-    "babel-eslint": "^8.2.2",
+    "babel-eslint": "^8.2.6",
     "babel-plugin-transform-object-rest-spread": "^6.26.0",
     "babel-polyfill": "^6.26.0",
-    "babel-preset-env": "^1.6.1",
-    "cross-env": "^5.1.4",
+    "babel-preset-env": "^1.7.0",
+    "cross-env": "^5.2.0",
     "del-cli": "^1.1.0",
-    "eslint": "^4.19.1",
-    "nodemon": "^1.17.2",
-    "npm-run-all": "^4.1.2",
+    "eslint": "^5.1.0",
+    "nodemon": "^1.18.3",
+    "npm-run-all": "^4.1.3",
     "standard": "^11.0.1"
   },
   "babel": {
