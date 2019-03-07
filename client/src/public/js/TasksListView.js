@@ -134,7 +134,7 @@ TasksListView.prototype.createTask = function (id, content, status, insertPositi
   task.className = 'task'
   task.id = `task-${id}`
   task.dataset.id = id
-  task.addEventListener('click', ({currentTarget: ct}) => {
+  task.addEventListener('click', ({ currentTarget: ct }) => {
     // use e.currentTarget to be sure to use the attached node instead of e.target which can be some child
     // use e.currentTarget when in lexical mode (arrow function), or this in normal function(event) mode
     const checkbox = ct.firstChild
@@ -179,7 +179,7 @@ TasksListView.prototype.createTask = function (id, content, status, insertPositi
       this.classList.remove('strike')
     }
   })
-  contentInput.addEventListener('blur', ({currentTarget: ct}) => {
+  contentInput.addEventListener('blur', ({ currentTarget: ct }) => {
     ct.readOnly = true
     const task = ct.parentElement
     const currentContent = ct.dataset.currentContent

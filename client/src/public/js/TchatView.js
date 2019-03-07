@@ -1,5 +1,6 @@
 'use strict'
 /* eslint-disable camelcase */
+
 /**
  * Constructor
  * @param {Tchat} model - Linked model
@@ -28,7 +29,8 @@ function TchatView (model) {
 TchatView.prototype.create = function (container) {
   const tchatTitle = createElement('h3', { textContent: 'Tchat' })
 
-  const headerDiv = createElement('header',
+  const headerDiv = createElement(
+    'header',
     { className: 'tchat-header' },
     tchatTitle
   )
@@ -39,19 +41,26 @@ TchatView.prototype.create = function (container) {
 
   // Footer Input
   const placeholder = 'Type some message ...'
-  const messageField = createElement('p',
-    {
-      className: 'message-field',
-      textContent: placeholder,
-      setAttribute: [['contenteditable', 'true']],
-      addEventListener: [
-        ['focus', function () {
+  const messageField = createElement('p', {
+    className: 'message-field',
+    textContent: placeholder,
+    setAttribute: [['contenteditable', 'true']],
+    addEventListener: [
+      [
+        'focus',
+        function () {
           if (this.textContent === placeholder) this.textContent = ''
-        }],
-        ['blur', function () {
+        }
+      ],
+      [
+        'blur',
+        function () {
           if (!this.textContent) this.textContent = placeholder
-        }],
-        ['keyup', ({ key, shiftKey, currentTarget }) => {
+        }
+      ],
+      [
+        'keyup',
+        ({ key, shiftKey, currentTarget }) => {
           switch (key) {
             case 'Esc':
             case 'Escape':
@@ -61,45 +70,63 @@ TchatView.prototype.create = function (container) {
 
             case 'Enter':
               if (shiftKey) break // SHIFT + Enter = linebreak
-              passMessage2Model(currentTarget, placeholder, this.model.sendMessage)
+              passMessage2Model(
+                currentTarget,
+                placeholder,
+                this.model.sendMessage.bind(this.model)
+              )
               currentTarget.textContent = ''
               break
 
-            default: break
+            default:
+              break
           }
-        }]
+        }
       ]
-    }
-  )
+    ]
+  })
   // TODO: test on tablet
-  const sendButton = createElement('button',
-    {
-      className: 'send-button',
-      innerHTML: '<i class="material-icons">send</i>',
-      title: 'Send message',
-      addEventListener: [
-        ['click', event => {
-          const field = event.currentTarget.parentElement.parentElement.getElementsByClassName('message-field')[0]
-          passMessage2Model(field, placeholder, this.model.sendMessage)
+  const sendButton = createElement('button', {
+    className: 'send-button',
+    innerHTML: '<i class="material-icons">send</i>',
+    title: 'Send message',
+    addEventListener: [
+      [
+        'click',
+        (event) => {
+          const field = event.currentTarget.parentElement.parentElement.getElementsByClassName(
+            'message-field'
+          )[0]
+          passMessage2Model(
+            field,
+            placeholder,
+            this.model.sendMessage.bind(this.model)
+          )
           messageField.textContent = placeholder
-        }]
+        }
       ]
-    }
-  )
+    ]
+  })
 
-  const buttonsContainer = createElement('div',
+  const buttonsContainer = createElement(
+    'div',
     { className: 'buttons-container' },
     sendButton
   )
 
-  const footerDiv = createElement('footer',
+  const footerDiv = createElement(
+    'footer',
     { className: 'tchat-footer' },
-    messageField, buttonsContainer
+    messageField,
+    buttonsContainer
   )
 
-  const mainDiv = createElement('div',
+  const mainDiv = createElement(
+    'div',
     { className: 'tchat-container' },
-    headerDiv, messageList, footerDiv
+    headerDiv,
+    messageList,
+    footerDiv
   )
 
   // Finally add to the DOM
@@ -116,39 +143,39 @@ TchatView.prototype.create = function (container) {
  * @param {string} created_at - Message's creation date
  */
 TchatView.prototype.createMessage = function (id, sender, content, created_at) {
-  const senderDisplay = createElement('div',
-    {
-      className: 'senderDisplay',
-      textContent: sender
-    }
-  )
+  const senderDisplay = createElement('div', {
+    className: 'senderDisplay',
+    textContent: sender
+  })
 
-  const postDate = createElement('div',
-    {
-      textContent: moment(created_at, null, 'en').fromNow(), // eslint-disable-line no-undef
-      className: 'postDate'
-    }
-  )
+  const postDate = createElement('div', {
+    textContent: moment(created_at, null, 'en').fromNow(), // eslint-disable-line no-undef
+    className: 'postDate'
+  })
 
-  const messageContent = createElement('div',
+  const messageContent = createElement(
+    'div',
     {
       dataset: { currentContent: content },
       innerText: content,
-      className: sender === this.model.pseudo
-        ? 'messageOwnContent'
-        : 'messageContent'
+      className:
+        sender === this.model.pseudo ? 'messageOwnContent' : 'messageContent'
     },
     postDate
   )
 
-  const message = createElement('li',
+  const message = createElement(
+    'li',
     {
       id: `message-${id}`,
       dataset: { id },
       className: 'message',
-      classList: { add: sender === this.model.pseudo ? ['reverseFlexDirection'] : null }
+      classList: {
+        add: sender === this.model.pseudo ? ['reverseFlexDirection'] : null
+      }
     },
-    senderDisplay, messageContent
+    senderDisplay,
+    messageContent
   )
 
   this.messageContainer.appendChild(message)
@@ -186,12 +213,19 @@ TchatView.prototype.removeMessage = function (id) {
  * @param {string} placeholder - optional placeholder text to compare
  *                               to prevent unnecessary server request
  * @param {function} sendMessage - model's function
+ * /!\ IMPORTANT: when passing a method reference as callback, the 'this' context is lost !
+ * Here the reference is tied to this.model, so have to bind to it to preserve the this context
+ * when the callback will use it.
+ * https://stackoverflow.com/questions/15048775/how-to-get-callback-to-work-with-this-in-class-scope/15048802#15048802
  */
 function passMessage2Model (field, placeholder = '', sendMessage) {
   const newContent = field.innerText // preserves linebreaks unlike textContent
   if (newContent !== '' && newContent !== placeholder) {
     // Remove additional unnecessary linebreaks at the end of new content
-    const trimmedContent = newContent.split('\n').filter(v => v.length).join('\n')
+    const trimmedContent = newContent
+      .split('\n')
+      .filter((v) => v.length)
+      .join('\n')
     sendMessage(trimmedContent)
   }
 }

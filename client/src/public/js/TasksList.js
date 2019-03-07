@@ -61,7 +61,7 @@ TasksList.prototype.load = function () {
   this.socket.emit(
     'getAllTasks',
     null,
-    ({status, message, data: tasks}) => {
+    ({ status, message, data: tasks }) => {
       if (status === 'failed') return console.error('Error with getAllTasks fetch\n', message)
 
       // Sort tasks by finished_at then by created_at properties
@@ -98,7 +98,7 @@ TasksList.prototype.createTask = function (content) {
   this.socket.emit(
     'createTask',
     JSON.stringify({ groupId: this.groupId, content }),
-    ({status, message, data}) => {
+    ({ status, message, data }) => {
       if (status === 'failed') return console.error('Error with createTask fetch\n', message)
       console.log('createTask data', data)
       // Add to the DOM
@@ -118,7 +118,7 @@ TasksList.prototype.updateTask = function (id, content, finished) {
   this.socket.emit(
     'updateTask',
     JSON.stringify({ id, content, finished }),
-    ({status, message, data}) => {
+    ({ status, message, data }) => {
       if (status === 'failed') return console.error('Error with updateTask fetch\n', message)
       // console.log('Server answered @ TaskList updateTask:', data)
       this.onTaskUpdated(data) // Update the DOM element and its model
@@ -134,7 +134,7 @@ TasksList.prototype.removeTask = function (id) {
   this.socket.emit(
     'removeTask',
     JSON.stringify({ groupId: this.groupId, id }),
-    ({status, message}) => {
+    ({ status, message }) => {
       if (status === 'failed') return console.error('Error with removeTask fetch\n', message)
       // console.log'removeTask data', data)
       this.onTaskRemoved(id) // Remove from the DOM
@@ -156,7 +156,7 @@ TasksList.prototype.onTaskCreated = function ({ id, content, created_at }) {
   this.tasks.splice(
     index2insert === 0 ? 0 : (index2insert - 1),
     0,
-    {id, content, created_at, finished_at: null, deleted_at: null}
+    { id, content, created_at, finished_at: null, deleted_at: null }
   )
   this.view.createTask(id, content, false, index2insert)
   this.view.updateCompletion(this.countRemainingTasks(), this.tasks.length)

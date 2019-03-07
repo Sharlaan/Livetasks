@@ -37,7 +37,7 @@ GroupsView.prototype.create = function (container, groups) {
     // this.model.switchGroup(event.target.dataset.id)
   })
 
-  for (let {id, name} of groups) {
+  for (let { id, name } of groups) {
     let li = document.createElement('li')
     li.dataset.id = id
     if (id === 1) li.classList.add('active')

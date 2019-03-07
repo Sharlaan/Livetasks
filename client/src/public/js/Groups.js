@@ -29,7 +29,7 @@ Groups.prototype.loadGroups = function () {
     this.socket.emit(
       'getAllGroups',
       null,
-      ({status, message, data: groups}) => {
+      ({ status, message, data: groups }) => {
         if (status === 'failed') reject(new Error(`Error with getAllGroups fetch:\n ${message}`))
         resolve(groups)
       }
@@ -37,7 +37,7 @@ Groups.prototype.loadGroups = function () {
   })
 }
 
-Groups.prototype.loadTasksList = function ({id, name}, groupContainer) {
+Groups.prototype.loadTasksList = function ({ id, name }, groupContainer) {
   const tasksList = new TasksList(id, this.socket) // eslint-disable-line no-undef
   tasksList.init(name, groupContainer)
 }
@@ -52,7 +52,7 @@ Groups.prototype.switchGroup = function (groupId) {
     this.socket.emit(
       'joinGroup',
       groupId,
-      ({status, message, data: group}) => {
+      ({ status, message, data: group }) => {
         if (status === 'failed') reject(new Error(`Error with joinGroup fetch:\n ${message}`))
         resolve(group)
       }

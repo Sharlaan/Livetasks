@@ -1,5 +1,6 @@
 /* eslint-disable brace-style */
 'use strict'
+
 /**
  * Helper function to build an element
  *
@@ -18,20 +19,18 @@ function createElement (type, props, ...children) {
         // Element.prototype[propName].apply(element, ...functionArguments)
         element[propName](...functionArguments)
       }
-    }
-    /* propValue must be ObjectOf({add: [], remove: [], toggle: []}) */
-    else if (propName === 'classList') {
-      for (let [verb, classes] of Object.entries(propValue)) { // verb = add | remove | toggle
+    } else if (propName === 'classList') {
+      /* propValue must be ObjectOf({add: [], remove: [], toggle: []}) */
+      for (let [verb, classes] of Object.entries(propValue)) {
+        // verb = add | remove | toggle
         if (classes) element.classList[verb](...classes)
       }
-    }
-    /* propValue must be ObjectOf({customProp: value}) */
-    else if (propName === 'dataset') {
+    } else if (propName === 'dataset') {
+      /* propValue must be ObjectOf({customProp: value}) */
       for (let [customProp, value] of Object.entries(propValue)) {
         element.dataset[customProp] = value
       }
-    }
-    else element[propName] = propValue
+    } else element[propName] = propValue
   }
   for (let child of children) {
     element.appendChild(child)

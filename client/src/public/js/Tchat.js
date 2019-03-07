@@ -40,20 +40,21 @@ function Tchat (groupId, socket) {
  * @param {DomElement} container - Group's container created by <Groups>
  */
 Tchat.prototype.init = function (container) {
-  this.view.create(container)
+  this.view
+    .create(container)
     .then(() => this.checkPseudo())
     .then(() => this.load())
 
   // Initialize broadcasted event listeners
-  this.socket.on('onMessageCreated', data => {
+  this.socket.on('onMessageCreated', (data) => {
     console.warn('Received broadcasted event onMessageCreated\n', data)
     this.onMessageSent(data)
   })
-  this.socket.on('onMessageUpdated', data => {
+  this.socket.on('onMessageUpdated', (data) => {
     console.warn('Received broadcasted event onMessageUpdated\n', data)
     this.onMessageUpdated(data)
   })
-  this.socket.on('onMessageRemoved', data => {
+  this.socket.on('onMessageRemoved', (data) => {
     console.warn('Received broadcasted event onMessageRemoved\n', data)
     this.onMessageRemoved(data.id)
   })
@@ -63,8 +64,8 @@ Tchat.prototype.checkPseudo = function () {
   return new Promise((resolve, reject) => {
     this.socket.emit(
       'registerUser',
-      prompt('Type a pseudo to identify you in app\'s tchats:'), // eslint-disable-line no-undef
-      pseudo => {
+      prompt("Type a pseudo to identify you in app's tchats:"), // eslint-disable-line no-undef
+      (pseudo) => {
         if (!pseudo) reject(new Error('Your pseudo did not register properly.'))
         const appHeader = document.querySelector('body > header')
         const pseudoDisplay = document.createElement('span')
@@ -84,8 +85,8 @@ Tchat.prototype.load = function () {
   this.socket.emit(
     'getAllMessages',
     null,
-    ({status, message, data: messages}) => {
-      if (status === 'failed') return console.error('Error with getAllMessages fetch\n', message)
+    ({ status, message, data: messages }) => {
+      if (status === 'failed') { return console.error('Error with getAllMessages fetch\n', message) }
       // Load messages
       this.messages = messages
       // Create views
@@ -104,8 +105,8 @@ Tchat.prototype.sendMessage = async function (content) {
   this.socket.emit(
     'sendMessage',
     JSON.stringify({ groupId: this.groupId, sender: this.pseudo, content }),
-    ({status, message, data}) => {
-      if (status === 'failed') return console.error('Error with sendMessage fetch\n', message)
+    ({ status, message, data }) => {
+      if (status === 'failed') { return console.error('Error with sendMessage fetch\n', message) }
       console.log('sendMessage data', data)
       // Add to the DOM
       this.onMessageSent(data)
@@ -123,8 +124,8 @@ Tchat.prototype.updateMessage = function (id, content) {
   this.socket.emit(
     'updateMessage',
     JSON.stringify({ id, content }),
-    ({status, message, data}) => {
-      if (status === 'failed') return console.error('Error with updateMessage fetch\n', message)
+    ({ status, message, data }) => {
+      if (status === 'failed') { return console.error('Error with updateMessage fetch\n', message) }
       // console.log('Server answered @ Tchat updateMessage:', data)
       this.onMessageUpdated(data) // Update the DOM element and its model
     }
@@ -139,8 +140,8 @@ Tchat.prototype.removeMessage = function (id) {
   this.socket.emit(
     'removeMessage',
     JSON.stringify({ groupId: this.groupId, id }),
-    ({status, message}) => {
-      if (status === 'failed') return console.error('Error with removeMessage fetch\n', message)
+    ({ status, message }) => {
+      if (status === 'failed') { return console.error('Error with removeMessage fetch\n', message) }
       // console.log'removeMessage data', data)
       this.onMessageRemoved(id) // Remove from the DOM
     }
@@ -167,7 +168,7 @@ Tchat.prototype.onMessageSent = function ({ id, sender, content, created_at }) {
 Tchat.prototype.onMessageUpdated = function ({ id, content }) {
   // console.log'onMessageUpdated\ncontent', content)
   // Update model
-  const message = this.messages.find(message => message.id === id)
+  const message = this.messages.find((message) => message.id === id)
   if (message) {
     message.content = content
   }
@@ -182,7 +183,7 @@ Tchat.prototype.onMessageUpdated = function ({ id, content }) {
  */
 Tchat.prototype.onMessageRemoved = function (id) {
   // Remove model
-  const index = this.messages.findIndex(message => message.id === +id)
+  const index = this.messages.findIndex((message) => message.id === +id)
   if (index !== -1) this.messages.splice(index, 1)
 
   // Update view
