@@ -28,7 +28,7 @@ export default {
    * @param {null} data - received from client
    * @param {function} response - callback function used by client
    * which will receive the server data
-   * @return {json} response
+   * @return {JSON} response
    */
   async all (data, response) {
     try {

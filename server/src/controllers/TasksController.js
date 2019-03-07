@@ -22,7 +22,7 @@ export default {
    * @param {null} data - received from client
    * @param {function} response - callback function used by client
    * which will receive the server data
-   * @return {json} response
+   * @return {JSON} response
    */
   async all (data, response) {
     try {
@@ -51,7 +51,7 @@ export default {
    * @return {json} response
    */
   async create (data, response) {
-    const {groupId, content} = JSON.parse(data)
+    const { groupId, content } = JSON.parse(data)
     if (!/^\d+$/.test(groupId) || typeof content !== 'string') {
       return response({
         status: 'failed',
@@ -91,7 +91,8 @@ export default {
    */
   async update (data, response) {
     const { id, content, finished } = JSON.parse(data)
-    if (!/^\d+$/.test(id) ||
+    if (
+      !/^\d+$/.test(id) ||
       typeof content !== 'string' ||
       typeof finished !== 'boolean'
     ) {

@@ -9,7 +9,7 @@ export default class Message {
    * @return {Promise} promise
    */
   static getAll () {
-    return db.any(messagesQueries.getAll.query)
+    return db.any(messagesQueries.getAll)
   }
 
   /**
@@ -17,7 +17,7 @@ export default class Message {
    * @return {Promise} promise
    */
   static get (id) {
-    return db.one(messagesQueries.get.query, [id])
+    return db.one(messagesQueries.get, [id])
   }
 
   /**
@@ -28,7 +28,7 @@ export default class Message {
    * @return {Promise} promise (id, group_id, sender, content, created_at)
    */
   static create (group_id, sender, content) {
-    return db.one(messagesQueries.create.query, [group_id, sender, content])
+    return db.one(messagesQueries.create, [group_id, sender, content])
   }
 
   /**
@@ -38,7 +38,7 @@ export default class Message {
    * @return {Promise} promise (id, group_id, sender, content, created_at)
    */
   static update (id, content) {
-    return db.one(messagesQueries.update.query, [id, content])
+    return db.one(messagesQueries.update, [id, content])
   }
 
   /**
@@ -47,6 +47,6 @@ export default class Message {
    * @return {Promise} promise
    */
   static remove (id) {
-    return db.none(messagesQueries.remove.query, [id])
+    return db.none(messagesQueries.remove, [id])
   }
 }

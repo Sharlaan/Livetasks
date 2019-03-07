@@ -9,7 +9,7 @@ export default class Task {
    * @return {Promise} promise
    */
   static getAll () {
-    return db.any(tasksQueries.getAll.query)
+    return db.any(tasksQueries.getAll)
   }
 
   /**
@@ -17,7 +17,7 @@ export default class Task {
    * @return {Promise} promise
    */
   static get (id) {
-    return db.one(tasksQueries.get.query, [id])
+    return db.one(tasksQueries.get, [id])
   }
 
   /**
@@ -27,7 +27,7 @@ export default class Task {
    * @return {Promise} promise (id, group_id, content, created_at)
    */
   static create (group_id, content) {
-    return db.one(tasksQueries.create.query, [group_id, content])
+    return db.one(tasksQueries.create, [group_id, content])
   }
 
   /**
@@ -38,7 +38,7 @@ export default class Task {
    * @return {Promise} promise (id, group_id, content, created_at, finished_at)
    */
   static update (id, content, status) {
-    return db.one(tasksQueries.update.query, [id, content, status])
+    return db.one(tasksQueries.update, [id, content, status])
   }
 
   /**
@@ -47,6 +47,6 @@ export default class Task {
    * @return {Promise} promise
    */
   static remove (id) {
-    return db.none(tasksQueries.remove.query, [id])
+    return db.none(tasksQueries.remove, [id])
   }
 }

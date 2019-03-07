@@ -9,7 +9,7 @@ export default class Group {
    * @return {Promise} promise
    */
   static getAll () {
-    return db.any(groupsQueries.getAll.query)
+    return db.any(groupsQueries.getAll)
   }
 
   /**
@@ -17,7 +17,7 @@ export default class Group {
    * @return {Promise} promise returning {id, name}
    */
   static get (id) {
-    return db.one(groupsQueries.get.query, [id])
+    return db.one(groupsQueries.get, [id])
   }
 
   /**
@@ -26,7 +26,7 @@ export default class Group {
    * @return {Promise} promise (id, name, created_at)
    */
   static create (name) {
-    return db.one(groupsQueries.create.query, [name])
+    return db.one(groupsQueries.create, [name])
   }
 
   /**
@@ -36,7 +36,7 @@ export default class Group {
    * @return {Promise} promise (id, name, created_at)
    */
   static update (id, name) {
-    return db.one(groupsQueries.update.query, [id, name])
+    return db.one(groupsQueries.update, [id, name])
   }
 
   /**
@@ -45,6 +45,6 @@ export default class Group {
    * @return {Promise} promise
    */
   static remove (id) {
-    return db.none(groupsQueries.remove.query, [id])
+    return db.none(groupsQueries.remove, [id])
   }
 }
